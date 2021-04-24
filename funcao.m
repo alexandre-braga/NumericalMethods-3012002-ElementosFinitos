@@ -1,3 +1,3 @@
 function [y] = funcao(x)
-  y = sin(x);
+  y = x^2;
 endfunction
