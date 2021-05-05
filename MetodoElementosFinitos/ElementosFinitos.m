@@ -55,7 +55,7 @@ F(2) = F(2) - (1*K(2,1));
 K(2,1) = 0;
 
 %Condição de Neumann
-%qb = 0
+F(nel+1) = F(nel+1) - 0
 
 %função exata
 x = a;
