@@ -1,4 +1,3 @@
-function [y] = funcaok(x)
-  E = 10e-3;
+function [y] = funcaok(x,E)
   y = E;
 endfunction

@@ -23,7 +23,7 @@ for grau = 1:4
     %grau do polinomio de interpolação
     k = grau;
     %n de nós do elemento
-    nen = k+1
+    nen = k+1;
     %n de nós global
     np =  k*nel+1;
     %n de pontos de integração
@@ -56,14 +56,24 @@ for grau = 1:4
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
-            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx)*shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
+            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
             M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*shg(1,j,l)*w(l)*h/2;
           endfor
         endfor
       endfor
     endfor
-
+    
+    %Verificação de valores
+    %cont
+    %K11CERTO = 1*E/h
+    %K11 = K(1,1)
+    %M11CERTO = 2*h/6
+    %M11 = M(1,1)
+    %KM11CERTO = K11CERTO + M11CERTO
     KM = K + M;
+    %KM11 = KM(1,1)
+    %F11CERTO = h/2
+    %F11 = F(1,1)
     
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
@@ -91,23 +101,23 @@ for grau = 1:4
     u = KM\F;
 
     %cálculo do erro
-    %  erdul2 = 0;
-    %  for n = 1:nel
-    %    erdu = 0;
-    %    for l = 1:nint
-    %      duh = 0;
-    %      xx = 0;
-    %      for i = 1:nen
-    %        duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
-    %        xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
-    %      endfor
-    %      erdu = erdu + ((dfuncaoExata(xx) - duh)**2) * w(l) * h/2;
-    %    endfor
-    %    erdul2 = erdul2 + erdu;
-    %  endfor
-    %  erdul2 = sqrt(erdul2);
-    %  erro(cont) = erdul2;
-    %  hh(cont) = h;
+    erdul2 = 0;
+    for n = 1:nel
+      erdu = 0;
+      for l = 1:nint
+        duh = 0;
+        xx = 0;
+        for i = 1:nen
+          duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
+          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+         endfor
+         erdu = erdu + ((dfuncaoExata(xx,E) - duh)**2) * w(l) * h/2;
+        endfor
+        erdul2 = erdul2 + erdu;
+      endfor
+      erdul2 = sqrt(erdul2);
+      erro(cont) = erdul2;
+      hh(cont) = h;
       
       %salva a resolucao
       nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont, grau);
