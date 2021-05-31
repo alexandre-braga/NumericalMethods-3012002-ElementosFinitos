@@ -10,9 +10,14 @@ erro = zeros(4,1);
 hh = zeros(4,1);
 
 for grau = 1:4
-  for cont = 2:5
+  for cont = 1:4
+    if cont < 3
+      E = 10e-3;
+    else
+      E = 10e-4;
+    endif
     %n de elementos
-    nel = 4^(cont);
+    nel = 4*(cont);
     %tamanho do elemento
     h = (b-a)/nel
     %grau do polinomio de interpolação
@@ -39,7 +44,7 @@ for grau = 1:4
     endfor
 
     %gera shg e pega as funções peso
-    [shg, w]= shgGera(nen,nint)
+    [shg, w]= shgGera(nen,nint);
 
     %montagem global
     for n = 1:nel
@@ -63,20 +68,22 @@ for grau = 1:4
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
     KM(1,2) = 0;
-    F(1) = 1;
+    F(1) = 0;
     F(2) = F(2) - (1*KM(2,1));
     KM(2,1) = 0;
     
-    %Condição de Robin saida
-    
-    KM(nel+1,nel+1) += 10e6*0.5;
-    F(nel+1) += 10e6*0.5+5/2;
+    %Condição de Dirichlet saida
+    KM(nel+1,nel+1) = 1;
+    KM(nel+1,nel) = 0;
+    F(nel+1) = 0;
+    F(nel) = F(nel) - (1*KM(nel,nel+1));
+    KM(nel,nel+1) = 0;
     
     %função exata
     x = a;
     exata = zeros(np,1);
     for i = 1:np
-      exata(i) = funcaoExata(x);
+      exata(i) = funcaoExata(x,E);
       x += h/k;
     endfor  
     x = a:h/k:b;
@@ -84,26 +91,26 @@ for grau = 1:4
     u = KM\F;
 
     %cálculo do erro
-      erdul2 = 0;
-      for n = 1:nel
-        erdu = 0;
-        for l = 1:nint
-          duh = 0;
-          xx = 0;
-          for i = 1:nen
-            duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
-            xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
-          endfor
-          erdu = erdu + ((dfuncaoExata(xx) - duh)**2) * w(l) * h/2;
-        endfor
-        erdul2 = erdul2 + erdu;
-      endfor
-      erdul2 = sqrt(erdul2);
-      erro(cont) = erdul2;
-      hh(cont) = h;
+    %  erdul2 = 0;
+    %  for n = 1:nel
+    %    erdu = 0;
+    %    for l = 1:nint
+    %      duh = 0;
+    %      xx = 0;
+    %      for i = 1:nen
+    %        duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
+    %        xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+    %      endfor
+    %      erdu = erdu + ((dfuncaoExata(xx) - duh)**2) * w(l) * h/2;
+    %    endfor
+    %    erdul2 = erdul2 + erdu;
+    %  endfor
+    %  erdul2 = sqrt(erdul2);
+    %  erro(cont) = erdul2;
+    %  hh(cont) = h;
       
       %salva a resolucao
-      nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont-1, grau);
+      nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont, grau);
       save(nome, 'xl', 'h', 'u', 'x', 'exata');
       
   endfor 
