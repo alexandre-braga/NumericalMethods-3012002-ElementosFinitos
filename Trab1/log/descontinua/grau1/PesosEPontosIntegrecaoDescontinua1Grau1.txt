@@ -1,4 +1,4 @@
-# Created by Octave 6.2.0, Sun May 16 19:23:40 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Tue Jun 01 00:44:08 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: uu
 # type: matrix
 # rows: 16
@@ -57,8 +57,24 @@
 
 # name: xl
 # type: matrix
-# rows: 1
-# columns: 17
- -2 -1.75 -1.5 -1.25 -1 -0.75 -0.5 -0.25 0 0.25 0.5 0.75 1 1.25 1.5 1.75 2
+# rows: 17
+# columns: 1
+ -2
+ -1.75
+ -1.5
+ -1.25
+ -1
+ -0.75
+ -0.5
+ -0.25
+ 0
+ 0.25
+ 0.5
+ 0.75
+ 1
+ 1.25
+ 1.5
+ 1.75
+ 2
 
 

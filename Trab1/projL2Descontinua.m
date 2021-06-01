@@ -23,6 +23,7 @@ for grau = 1:4
     nint = nen;
     
     %montagem do xl !!!LINEAR!!!
+    xl = zeros(np,1);
     xl(1) = a;
     for i = 2:np
       xl(i) = xl(i-1) + h/k;

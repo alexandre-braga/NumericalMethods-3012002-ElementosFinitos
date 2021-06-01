@@ -46,10 +46,7 @@ for grau = 1:4
 
     %gera shg e pega as funções peso
     [shg, w]= shgGera(nen,nint);
-    %gera shg e pega as funções peso PetrovGalerkin
-    if grau <= 1
-      [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E);
-    endif
+
     %montagem global
     for n = 1:nel
       for l = 1:nint
