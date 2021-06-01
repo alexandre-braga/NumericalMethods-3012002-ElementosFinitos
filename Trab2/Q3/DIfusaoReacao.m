@@ -4,8 +4,8 @@ close all
 
 format long;
 %dominio
-a = 0.;
-b = 1.;
+a = 0.0;
+b = 1.0;
 erro = zeros(4,1);
 hh = zeros(4,1);
 
@@ -38,6 +38,7 @@ for grau = 1:4
     F = zeros(np,1);
 
     %montagem do xl !!!LINEAR!!!
+    xl = zeros(np,1);
     xl(1) = a;
     for i = 2:np
       xl(i) = xl(i-1) + h/k;
@@ -45,7 +46,10 @@ for grau = 1:4
 
     %gera shg e pega as funções peso
     [shg, w]= shgGera(nen,nint);
-
+    %gera shg e pega as funções peso PetrovGalerkin
+    if grau <= 1
+      [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E);
+    endif
     %montagem global
     for n = 1:nel
       for l = 1:nint
@@ -63,21 +67,35 @@ for grau = 1:4
       endfor
     endfor
     
+    %Verificação de valores
+    %cont
+    %K11CERTO = 1*E/h
+    %K11 = K(1,1)
+    %M11CERTO = 2*h/6
+    %M11 = M(1,1)
+    %KM11CERTO = K11CERTO + M11CERTO
     KM = K + M;
+    %KM11 = KM(1,1)
+    %F11CERTO = h/2
+    %F11 = F(1,1)
     
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
-    KM(1,2) = 0;
     F(1) = 0;
-    F(2) = F(2) - (1*KM(2,1));
-    KM(2,1) = 0;
+    for i = 2:k+1
+      F(i) = F(i) - (F(1)*KM(i,1));
+      KM(1,i) = 0;
+      KM(i,1) = 0;
+    endfor
     
     %Condição de Dirichlet saida
-    KM(nel+1,nel+1) = 1;
-    KM(nel+1,nel) = 0;
-    F(nel+1) = 0;
-    F(nel) = F(nel) - (1*KM(nel,nel+1));
-    KM(nel,nel+1) = 0;
+    KM(np,np) = 1;
+    F(np) = 0;
+    for i = 2:k+1
+      F(i) = F(i) - (F(np)*KM(i,1));
+      KM(np,i) = 0;
+      KM(i,np) = 0;
+    endfor
     
     %função exata
     x = a;

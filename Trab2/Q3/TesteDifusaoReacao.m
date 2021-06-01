@@ -9,7 +9,7 @@ b = 1.0;
 erro = zeros(4,1);
 hh = zeros(4,1);
 
-for grau = 1:4
+for grau = 1:1
   for cont = 1:4
     if cont < 3
       E = 10e-3;
@@ -48,7 +48,7 @@ for grau = 1:4
     [shg, w]= shgGera(nen,nint);
     %gera shg e pega as funções peso PetrovGalerkin
     if grau <= 1
-      [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E);
+      [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E,h);
     endif
     %montagem global
     for n = 1:nel
@@ -60,8 +60,8 @@ for grau = 1:4
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
-            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
-            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*shg(1,j,l)*w(l)*h/2;
+            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*w(l)*2/h*shgPG(2,j,l)*2/h*w(l)*h/2;
+            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*w(l)*shg(1,j,l)*w(l)*h/2;
           endfor
         endfor
       endfor
