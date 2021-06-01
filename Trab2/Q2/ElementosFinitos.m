@@ -18,7 +18,7 @@ for grau = 1:4
     %grau do polinomio de interpolação
     k = grau;
     %n de nós do elemento
-    nen = k+1
+    nen = k+1;
     %n de nós global
     np =  k*nel+1;
     %n de pontos de integração
@@ -32,14 +32,14 @@ for grau = 1:4
     %vetor fonte zerado
     F = zeros(np,1);
 
-    %montagem do xl !!!LINEAR!!!
+    %montagem do xl
+    xl = zeros(np,1);
     xl(1) = a;
     for i = 2:np
       xl(i) = xl(i-1) + h/k;
     endfor
-
     %gera shg e pega as funções peso
-    [shg, w]= shgGera(nen,nint)
+    [shg, w]= shgGera(nen,nint);
 
     %montagem global
     for n = 1:nel
@@ -62,16 +62,17 @@ for grau = 1:4
     
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
-    KM(1,2) = 0;
     F(1) = 1;
-    F(2) = F(2) - (1*KM(2,1));
-    KM(2,1) = 0;
+    for i = 2:k+1
+      F(i) = F(i) - (1*KM(i,1));
+      KM(1,i) = 0;
+      KM(i,1) = 0;
+    endfor
     
     %Condição de Robin saida
     
-    KM(nel+1,nel+1) += 10e6*0.5;
-    F(nel+1) += 10e6*0.5+5/2;
-    
+    KM(np,np) += 10e6*0.5;
+    F(np) += 10e6*0.5+5/2;
     %função exata
     x = a;
     exata = zeros(np,1);

@@ -54,9 +54,10 @@ for cont = 2:5
   endfor
 
   %Condição de Dirichlet
-  K(nel+1,nel+1) += 10e4;
+  K(nel+1,nel+1) = 1;
+  F(nel+1) = -1;
+  
   K(nel+1,nel) = 0;
-  F(nel+1) = 10e4*(-1);
   F(nel) = F(nel) + (1*K(nel,nel+1));
   K(nel,nel+1) = 0;
 

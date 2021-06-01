@@ -1,4 +1,4 @@
-function [shg, w] = shgGera(nen,nint)
+function [shg, w] = shgGeraPetrovGalerkin(nen,nint,E)
   %define pontos de integração e pesos
   switch (nint)
     %grau 1, 2 pts de integração
@@ -14,10 +14,10 @@ function [shg, w] = shgGera(nen,nint)
     switch (nen)
       %grau 1
       case 2
-        shg(1,1,l) = 0.5*(1.0 - t);
-        shg(1,2,l) = 0.5*(1.0 + t);
-        shg(2,1,l) = -1.0/2.0;
-        shg(2,2,l) = 1.0/2.0;
+        shg(1,1,l) = -( exp((t/2 - 1)/sqrt(E)) - exp((1 - t/2)/sqrt(E)) )/( exp(2/sqrt(E)) - exp(-2/sqrt(E)) );
+        shg(1,2,l) = ( exp((t/2 - 1)/sqrt(E)) - exp((1 - t/2)/sqrt(E)) )/( exp(2/sqrt(E)) - exp(-2/sqrt(E)) );
+        shg(2,1,l) = -( (1/2*sqrt(E))*exp((t - 2)/2*sqrt(E)) - (1/2*sqrt(E))*exp((2 - t)/2*sqrt(E)) ) / ( exp(2/sqrt(E)) - exp(-2/sqrt(E)) );
+        shg(2,2,l) = ( (1/2*sqrt(E))*exp((t - 2)/2*sqrt(E)) - (1/2*sqrt(E))*exp((2 - t)/2*sqrt(E)) ) / ( exp(2/sqrt(E)) - exp(-2/sqrt(E)) );
     endswitch
   endfor 
 endfunction
