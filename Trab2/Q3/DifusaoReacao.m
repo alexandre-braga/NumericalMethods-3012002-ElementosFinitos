@@ -64,17 +64,7 @@ for grau = 1:4
       endfor
     endfor
     
-    %Verificação de valores
-    %cont
-    %K11CERTO = 1*E/h
-    %K11 = K(1,1)
-    %M11CERTO = 2*h/6
-    %M11 = M(1,1)
-    %KM11CERTO = K11CERTO + M11CERTO
     KM = K + M;
-    %KM11 = KM(1,1)
-    %F11CERTO = h/2
-    %F11 = F(1,1)
     
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
@@ -86,13 +76,13 @@ for grau = 1:4
     endfor
     
     %Condição de Dirichlet saida
+    for i = np-(k+1):np
+      F(i) = F(i) - (F(np)*KM(i,np));
+      KM(np,i) = 0.;
+      KM(i,np) = 0.;
+    endfor
     KM(np,np) = 1;
     F(np) = 0;
-    for i = 2:k+1
-      F(i) = F(i) - (F(np)*KM(i,1));
-      KM(np,i) = 0;
-      KM(i,np) = 0;
-    endfor
     
     %função exata
     x = a;

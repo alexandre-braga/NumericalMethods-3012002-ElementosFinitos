@@ -1,12 +1,12 @@
-# Created by Octave 6.2.0, Mon May 31 23:45:48 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Wed Jun 02 15:14:00 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: erro
 # type: matrix
 # rows: 4
 # columns: 1
- 3.1490112494673239
- 3.1615792958236346
- 5.5959042878803134
- 5.6162402065494099
+ 3.1480571360881853
+ 3.1625789124352823
+ 5.595121735558549
+ 5.6164555370563907
 
 
 # name: hh

@@ -1,4 +1,4 @@
-# Created by Octave 6.2.0, Mon May 31 23:45:47 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Wed Jun 02 15:13:59 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: xl
 # type: matrix
 # rows: 5
@@ -20,10 +20,10 @@
 # rows: 5
 # columns: 1
  0
- 1.0067573742734675
- 0.99990860752680777
- 1.0067687117589601
- -0.0016779478529316038
+ 1.0067573351933798
+ 0.99991439137978255
+ 1.0059127405987849
+ 0
 
 
 # name: x

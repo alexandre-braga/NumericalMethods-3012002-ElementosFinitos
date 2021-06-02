@@ -47,9 +47,7 @@ for grau = 1:1
     %gera shg e pega as funções peso
     [shg, w]= shgGera(nen,nint);
     %gera shg e pega as funções peso PetrovGalerkin
-    if grau <= 1
-      [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E,h);
-    endif
+    [shgPG, wPG]= shgGeraPetrovGalerkin(nen,nint,E,h);
     %montagem global
     for n = 1:nel
       for l = 1:nint
@@ -60,24 +58,14 @@ for grau = 1:1
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
-            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*w(l)*2/h*shgPG(2,j,l)*2/h*w(l)*h/2;
+            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*w(l)*2/h*shgPG(2,j,l)*2/h*wPG(l)*h/2;
             M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*w(l)*shg(1,j,l)*w(l)*h/2;
           endfor
         endfor
       endfor
     endfor
     
-    %Verificação de valores
-    %cont
-    %K11CERTO = 1*E/h
-    %K11 = K(1,1)
-    %M11CERTO = 2*h/6
-    %M11 = M(1,1)
-    %KM11CERTO = K11CERTO + M11CERTO
     KM = K + M;
-    %KM11 = KM(1,1)
-    %F11CERTO = h/2
-    %F11 = F(1,1)
     
     %Condição de Dirichlet entrada
     KM(1,1) = 1;
@@ -89,13 +77,13 @@ for grau = 1:1
     endfor
     
     %Condição de Dirichlet saida
+    for i = np-(k+1):np
+      F(i) = F(i) - (F(np)*KM(i,np));
+      KM(np,i) = 0.;
+      KM(i,np) = 0.;
+    endfor
     KM(np,np) = 1;
     F(np) = 0;
-    for i = 2:k+1
-      F(i) = F(i) - (F(np)*KM(i,1));
-      KM(np,i) = 0;
-      KM(i,np) = 0;
-    endfor
     
     %função exata
     x = a;
