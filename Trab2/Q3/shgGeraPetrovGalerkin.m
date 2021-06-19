@@ -39,9 +39,9 @@ function [shg, w] = shgGeraPetrovGalerkin(nen,nint,E,h)
   %monta as funções de base
   for l = 1:nint
     t = pt(l);
-    shg(1,1,l) = -( exp((t - 1)/sqrt(E)) - exp((1 - t)/sqrt(E)) )/( exp(h/sqrt(E)) - exp(-h/sqrt(E)) );
-    shg(1,2,l) = ( exp((t - 1)/sqrt(E)) - exp((1 - t)/sqrt(E)) )/( exp(h/sqrt(E)) - exp(-h/sqrt(E)) );
-    shg(2,1,l) = -( (1*sqrt(E))*exp((t - 1)/1*sqrt(E)) - (1*sqrt(E))*exp((1 - t)/1*sqrt(E)) ) / ( exp(h/sqrt(E)) - exp(-h/sqrt(E)) );
-    shg(2,2,l) = ( (1*sqrt(E))*exp((t - 1)/1*sqrt(E)) - (1*sqrt(E))*exp((1 - t)/1*sqrt(E)) ) / ( exp(h/sqrt(E)) - exp(-h/sqrt(E)) );
+    shg(1,1,l) = -(exp((1/2)*E*h*(t-1))-exp(-(1/2)*E*h*(t-1)))/(exp(E*h)-exp(-E*h));
+    shg(1,2,l) = (exp((1/2)*E*h*(t+1))-exp(-(1/2)*E*h*(t+1)))/(exp(E*h)-exp(-E*h));
+    shg(2,1,l) = -((1/2)*E*h*exp((1/2)*E*h*(t-1))+(1/2)*E*h*exp(-(1/2)*E*h*(t-1)))/(exp(E*h)-exp(-E*h));
+    shg(2,2,l) = ((1/2)*E*h*exp((1/2)*E*h*(t+1))+(1/2)*E*h*exp(-(1/2)*E*h*(t+1)))/(exp(E*h)-exp(-E*h));
   endfor 
 endfunction

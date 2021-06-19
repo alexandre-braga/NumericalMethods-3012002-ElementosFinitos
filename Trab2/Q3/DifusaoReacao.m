@@ -1,7 +1,7 @@
 clc
 clear all
 close all
-
+%salva os erros
 format long;
 %dominio
 a = 0.0;
@@ -12,9 +12,9 @@ hh = zeros(4,1);
 for grau = 1:4
   for cont = 1:4
     if cont < 3
-      E = 10e-3;
+      E = 1.e-3;
     else
-      E = 10e-4;
+      E = 1.e-4;
     endif
     %n de elementos
     nel = 4*(cont);
@@ -120,8 +120,17 @@ for grau = 1:4
       
   endfor 
   
+  %verifica estabilidade
+  for i = 1:4
+    if hh(i) < sqrt(6*E)
+      estabilidade(i) = true;
+    else
+      estabilidade(i) = false;
+      difestabilidade(i) = hh(i) - sqrt(6*E);
+    endif
+  endfor
   %salva os erros
   nome = sprintf("log/Erros%d.txt", grau);
-  save(nome, 'erro', 'hh');
+  save(nome, 'erro', 'hh', 'estabilidade', 'difestabilidade');
 
 endfor 

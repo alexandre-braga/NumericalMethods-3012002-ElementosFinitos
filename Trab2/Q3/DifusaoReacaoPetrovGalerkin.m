@@ -12,9 +12,9 @@ hh = zeros(4,1);
 for grau = 1:1
   for cont = 1:4
     if cont < 3
-      E = 10e-3;
+      E = 1.e-3;
     else
-      E = 10e-4;
+      E = 1.e-4;
     endif
     %n de elementos
     nel = 4*(cont);
@@ -56,10 +56,10 @@ for grau = 1:1
           xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
         endfor
         for j = 1:nen
-          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
+          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shgPG(1,j,l)*wPG(l)*h/2;
           for i = 1:nen
             K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*w(l)*2/h*shgPG(2,j,l)*2/h*wPG(l)*h/2;
-            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*w(l)*shg(1,j,l)*w(l)*h/2;
+            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + funcaoY(xx)*shg(1,i,l)*w(l)*shgPG(1,j,l)*wPG(l)*h/2;
           endfor
         endfor
       endfor
@@ -116,13 +116,13 @@ for grau = 1:1
       hh(cont) = h;
       
       %salva a resolucao
-      nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont, grau);
+      nome = sprintf("log/PesosEPontosIntegrecaoPG%dGrau%d.txt", cont, grau);
       save(nome, 'xl', 'h', 'u', 'x', 'exata');
       
   endfor 
   
   %salva os erros
-  nome = sprintf("log/Erros%d.txt", grau);
+  nome = sprintf("log/ErrosPG%d.txt", grau);
   save(nome, 'erro', 'hh');
 
 endfor 

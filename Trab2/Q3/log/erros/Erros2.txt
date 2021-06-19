@@ -1,12 +1,12 @@
-# Created by Octave 6.2.0, Wed Jun 02 15:13:59 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Sat Jun 19 19:45:48 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: erro
 # type: matrix
 # rows: 4
 # columns: 1
- 0.5148749723693804
- 0.17515936832628645
- 0.98147509721956094
- 0.64414963509912615
+ 2.1525223542903356
+ 1.5572211325581209
+ 3.8225188700589388
+ 3.685909617448623
 
 
 # name: hh
@@ -17,5 +17,19 @@
  0.125
  0.083333333333333329
  0.0625
+
+
+# name: estabilidade
+# type: bool matrix
+# rows: 1
+# columns: 4
+ 0 0 0 0
+
+
+# name: difestabilidade
+# type: matrix
+# rows: 1
+# columns: 4
+ 0.22550510257216821 0.10050510257216821 0.058838435905501543 0.038005102572168215
 
 
