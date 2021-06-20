@@ -95,29 +95,30 @@ for grau = 1:4
     u = zeros(np);
     u = KM\F;
 
-    %cálculo do erro
-    erdul2 = 0;
+    %cálculo do erro L2
+    erul2 = 0;
     for n = 1:nel
-      erdu = 0;
+      eru = 0;
       for l = 1:nint
-        duh = 0;
+        uh = 0;
         xx = 0;
         for i = 1:nen
-          duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
+          uh = uh + shg(1,i,l)*u(k*(n-1)+i);
           xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
-         endfor
-         erdu = erdu + ((dfuncaoExata(xx,E) - duh)**2) * w(l) * h/2;
         endfor
-        erdul2 = erdul2 + erdu;
+        eru = eru + ((funcao(xx) - uh)**2) * w(l) * h/2;
       endfor
-      erdul2 = sqrt(erdul2);
-      erro(cont) = erdul2;
-      hh(cont) = h;
+      erul2 = erul2 + eru;
+    endfor
+    erul2 = sqrt(erul2);
+    erro(cont) = erul2;
+    hh(cont) = h;
       
-      %salva a resolucao
-      nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont, grau);
-      save(nome, 'xl', 'h', 'u', 'x', 'exata');
-      
+    %salva a resolucao
+    nome = sprintf("log/PesosEPontosIntegrecao%dGrau%d.txt", cont, grau);
+    save(nome, 'xl', 'h', 'u', 'x', 'exata');
+    
+  
   endfor 
   
   %verifica estabilidade
