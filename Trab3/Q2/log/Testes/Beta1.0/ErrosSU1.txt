@@ -1,0 +1,21 @@
+# Created by Octave 6.2.0, Sun Jun 20 00:22:05 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: erroSU
+# type: matrix
+# rows: 4
+# columns: 1
+ 5.1854360267287083
+ 3.6422148160870158
+ 3.2955926807712617
+ 0
+
+
+# name: hhSU
+# type: matrix
+# rows: 4
+# columns: 1
+ 0.02
+ 0.10000000000000001
+ 0.20000000000000001
+ 0
+
+
