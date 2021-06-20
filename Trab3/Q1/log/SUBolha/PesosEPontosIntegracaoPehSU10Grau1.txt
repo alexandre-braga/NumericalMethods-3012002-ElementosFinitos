@@ -1,0 +1,48 @@
+# Created by Octave 6.2.0, Sat Jun 19 23:17:05 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: xlSU
+# type: matrix
+# rows: 6
+# columns: 1
+ 0
+ 0.20000000000000001
+ 0.40000000000000002
+ 0.60000000000000009
+ 0.80000000000000004
+ 1
+
+
+# name: hSU
+# type: scalar
+0.20000000000000001
+
+
+# name: uSU
+# type: matrix
+# rows: 6
+# columns: 1
+ 0
+ 0.19999963867787152
+ 0.40001373024088893
+ 0.59946415928320795
+ 0.82089742663276599
+ 0
+
+
+# name: x
+# type: range
+# base, limit, increment
+0 1 0.20000000000000001
+
+
+# name: exata
+# type: matrix
+# rows: 6
+# columns: 1
+ 0
+ 0.20000000000000001
+ 0.40000000000000002
+ 0.60000000000000009
+ 0.79999999793884646
+ 0
+
+
