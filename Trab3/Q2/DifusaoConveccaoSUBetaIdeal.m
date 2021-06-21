@@ -19,7 +19,7 @@ for grau = 1:1
     hSU = (b-a)/nel
     %beta ideal
     Peh = hSU*abs(Kappa)/(2*E)
-    Beta = 1 - 1/Peh
+    Beta = coth(Peh) - 1/Peh
     %grau do polinomio de interpolação
     k = grau;
     %n de nós do elemento
@@ -94,34 +94,11 @@ for grau = 1:1
     x = a:hSU/k:b;
     uSU = zeros(np);
     uSU = KC\F;
-
-    %cálculo do erro
-    erdul2 = 0;
-    for n = 1:nel
-      erdu = 0;
-      for l = 1:nint
-        duh = 0;
-        xx = 0;
-        for i = 1:nen
-          duh = duh + shg(2,i,l)*2/hSU*uSU(k*(n-1)+i);
-          xx = xx + shg(1,i,l)*xlSU(k*(n-1)+i);
-        endfor
-        erdu = erdu + ((dfuncaoExata(xx,E,Kappa) - duh)**2) * w(l) * hSU/2;
-       endfor
-       erdul2 = erdul2 + erdu;
-     endfor
-    erdul2 = sqrt(erdul2);
-    erroSU(cont) = erdul2;
-    hhSU(cont) = hSU;
       
     %salva a resolucao
     nome = sprintf("log/BetaIdealDA%d.txt", Beta);
     save(nome, 'xlSU', 'hSU', 'uSU', 'x', 'exata');
       
   endfor 
-  
-  %salva os erros
-  nome = sprintf("log/ErrosBetaIdealDA%d.txt", grau);
-  save(nome, 'erroSU', 'hhSU');
 
 endfor 

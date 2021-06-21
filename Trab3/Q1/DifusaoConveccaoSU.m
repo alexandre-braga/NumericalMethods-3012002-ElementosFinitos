@@ -7,13 +7,13 @@ format long;
 a = 0.0;
 b = 1.0;
 erroSU = zeros(4,1);
+erroDerSU = zeros(4,1);
 hhSU = zeros(4,1);
 
 for grau = 1:1
   for cont = 1:3
     Kappa = 1.;
     E = 1.e-2;
-    Beta = 0.85;
     Peh = 1;
     if cont >=2
       Peh = 5;
@@ -21,6 +21,7 @@ for grau = 1:1
         Peh = 10;
       endif
     endif
+    Beta = coth(Peh) - 1/Peh;
     %tamanho do elemento
     hSU = (Peh*2*E)/abs(Kappa)
     %n de elementos
@@ -63,8 +64,8 @@ for grau = 1:1
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shgSU(1,j,l)*wSU(l)*hSU/2;
           for i = 1:nen
-            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,j,l)*2/hSU*shgSU(2,i,l)*2/hSU*w(l)*hSU/2;
-            C((k*(n-1)+i),(k*(n-1)+j)) = C((k*(n-1)+i),(k*(n-1)+j)) + funcaoKappa(xx,Kappa)*shg(2,j,l)*2/hSU*shgSU(1,i,l)*w(l)*hSU/2;
+            K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/hSU*shgSU(2,j,l)*2/hSU*w(l)*hSU/2;
+            C((k*(n-1)+j),(k*(n-1)+i)) = C((k*(n-1)+j),(k*(n-1)+i)) + funcaoKappa(xx,Kappa)*shg(2,i,l)*2/hSU*shgSU(1,j,l)*w(l)*hSU/2;
           endfor
         endfor
       endfor
@@ -99,8 +100,8 @@ for grau = 1:1
     x = a:hSU/k:b;
     uSU = zeros(np);
     uSU = KC\F;
-
-    %cálculo do erro
+    
+    %cálculo do erro derivada L2
     erdul2 = 0;
     for n = 1:nel
       erdu = 0;
@@ -116,9 +117,27 @@ for grau = 1:1
        erdul2 = erdul2 + erdu;
      endfor
     erdul2 = sqrt(erdul2);
-    erroSU(cont) = erdul2;
+    erroDerSU(cont) = erdul2;
+
+    %cálculo do erro L2
+    erul2 = 0;
+    for n = 1:nel
+      eru = 0;
+      for l = 1:nint
+        uh = 0;
+        xx = 0;
+        for i = 1:nen
+          uh = uh + shg(1,i,l)*uSU(k*(n-1)+i);
+          xx = xx + shg(1,i,l)*xlSU(k*(n-1)+i);
+        endfor
+        eru = eru + ((funcao(xx) - uh)**2) * w(l) * hSU/2;
+      endfor
+      erul2 = erul2 + eru;
+    endfor
+    erul2 = sqrt(erul2);
+    erroSU(cont) = erul2;
     hhSU(cont) = hSU;
-      
+  
     %salva a resolucao
     nome = sprintf("log/PesosEPontosIntegracaoPehSU%dGrau%d.txt", Peh, grau);
     save(nome, 'xlSU', 'hSU', 'uSU', 'x', 'exata');
@@ -127,6 +146,6 @@ for grau = 1:1
   
   %salva os erros
   nome = sprintf("log/ErrosSU%d.txt", grau);
-  save(nome, 'erroSU', 'hhSU');
+  save(nome, 'erroSU', 'hhSU', 'erroDerSU');
 
 endfor 

@@ -1,4 +1,4 @@
-# Created by Octave 6.2.0, Sat Jun 19 23:17:59 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Mon Jun 21 16:32:28 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: xlSU
 # type: matrix
 # rows: 6
@@ -21,10 +21,10 @@
 # rows: 6
 # columns: 1
  0
- 0.19999963867787152
- 0.40001373024088893
- 0.59946415928320795
- 0.82089742663276599
+ 0.19999999999999993
+ 0.3999999999999998
+ 0.59999999999999953
+ 0.79999999833046476
  0
 
 

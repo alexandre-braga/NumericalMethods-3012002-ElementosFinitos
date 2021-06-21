@@ -7,6 +7,7 @@ format long;
 a = 0.0;
 b = 1.0;
 erroSU = zeros(1001,1);
+erroDerSU = zeros(1001,1);
 hhSU = zeros(1001,1);
 betasSU = zeros(1001,1);
 
@@ -94,7 +95,7 @@ for grau = 1:1
     uSU = zeros(np);
     uSU = KC\F;
 
-    %cálculo do erro
+    %cálculo do erro derivada L2
     erdul2 = 0;
     for n = 1:nel
       erdu = 0;
@@ -102,23 +103,41 @@ for grau = 1:1
         duh = 0;
         xx = 0;
         for i = 1:nen
-          duh = duh + shgSU(2,i,l)*2/hSU*uSU(k*(n-1)+i);
-          xx = xx + shgSU(1,i,l)*xlSU(k*(n-1)+i);
+          duh = duh + shg(2,i,l)*2/hSU*uSU(k*(n-1)+i);
+          xx = xx + shg(1,i,l)*xlSU(k*(n-1)+i);
         endfor
         erdu = erdu + ((dfuncaoExata(xx) - duh)**2) * w(l) * hSU/2;
        endfor
        erdul2 = erdul2 + erdu;
      endfor
     erdul2 = sqrt(erdul2);
-    erroSU(cont) = erdul2;
+    erroDerSU(cont) = erdul2;
+
+    %cálculo do erro L2
+    erul2 = 0;
+    for n = 1:nel
+      eru = 0;
+      for l = 1:nint
+        uh = 0;
+        xx = 0;
+        for i = 1:nen
+          uh = uh + shg(1,i,l)*uSU(k*(n-1)+i);
+          xx = xx + shg(1,i,l)*xlSU(k*(n-1)+i);
+        endfor
+        eru = eru + ((funcao(xx) - uh)**2) * w(l) * hSU/2;
+      endfor
+      erul2 = erul2 + eru;
+    endfor
+    erul2 = sqrt(erul2);
+    erroSU(cont) = erul2;
     hhSU(cont) = hSU;
     betasSU(cont) = Beta;
     Beta += 0.001;
-      
+    
   endfor 
   
   %salva os erros
   nome = sprintf("log/ErrosBetaSU.txt");
-  save(nome, 'betasSU', 'erroSU', 'hhSU');
+  save(nome, 'betasSU', 'erroSU', 'hhSU', 'erroDerSU');
 
 endfor 
