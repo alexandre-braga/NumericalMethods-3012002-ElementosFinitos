@@ -106,7 +106,7 @@ for grau = 1:4
           uh = uh + shg(1,i,l)*u(k*(n-1)+i);
           xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
         endfor
-        eru = eru + ((funcao(xx) - uh)**2) * w(l) * h/2;
+        eru = eru + ((funcaoExata(xx) - uh)**2) * w(l) * h/2;
       endfor
       erul2 = erul2 + eru;
     endfor

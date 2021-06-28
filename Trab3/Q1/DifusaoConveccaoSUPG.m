@@ -130,7 +130,7 @@ for grau = 1:1
           uh = uh + shg(1,i,l)*uSUPG(k*(n-1)+i);
           xx = xx + shg(1,i,l)*xlSUPG(k*(n-1)+i);
         endfor
-        eru = eru + ((funcao(xx) - uh)**2) * w(l) * hSUPG/2;
+        eru = eru + ((funcaoExata(xx,E,Kappa) - uh)**2) * w(l) * hSUPG/2;
       endfor
       erul2 = erul2 + eru;
     endfor

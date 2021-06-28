@@ -96,23 +96,23 @@ for grau = 1:1
     u = zeros(np);
     u = KM\F;
 
-    %cálculo do erro
-    erdul2 = 0;
-    for n = 1:nel
-      erdu = 0;
-      for l = 1:nint
-        duh = 0;
-        xx = 0;
-        for i = 1:nen
-          duh = duh + shg(2,i,l)*2/h*u(k*(n-1)+i);
-          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
-         endfor
-         erdu = erdu + ((dfuncaoExata(xx,E) - duh)**2) * w(l) * h/2;
+      %cálculo do erro L2
+      erul2 = 0;
+      for n = 1:nel
+        eru = 0;
+        for l = 1:nint
+          uh = 0;
+          xx = 0;
+          for i = 1:nen
+            uh = uh + shg(1,i,l)*u(k*(n-1)+i);
+            xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+          endfor
+          eru = eru + ((funcaoExata(xx) - uh)**2) * w(l) * h/2;
         endfor
-        erdul2 = erdul2 + erdu;
+        erul2 = erul2 + eru;
       endfor
-      erdul2 = sqrt(erdul2);
-      erro(cont) = erdul2;
+      erul2 = sqrt(erul2);
+      erro(cont) = erul2;
       hh(cont) = h;
       
       %salva a resolucao

@@ -19,7 +19,7 @@ for grau = 1:1
     hSU = (b-a)/nel
     %beta ideal
     Peh = hSU*abs(Kappa)/(2*E)
-    Beta = coth(Peh) - 1/Peh
+    Beta = coth(Peh) - 1/Peh;
     %grau do polinomio de interpolação
     k = grau;
     %n de nós do elemento

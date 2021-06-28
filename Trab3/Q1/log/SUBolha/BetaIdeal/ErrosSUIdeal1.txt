@@ -1,11 +1,11 @@
-# Created by Octave 6.2.0, Mon Jun 21 16:32:28 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Sun Jun 27 21:01:41 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: erroSU
 # type: matrix
 # rows: 4
 # columns: 1
- 0.58431609759798653
- 0.60827806436509979
- 0.64291005092329889
+ 0.019718961864499274
+ 0.15660817254403347
+ 0.25374103122377895
  0
 
 
