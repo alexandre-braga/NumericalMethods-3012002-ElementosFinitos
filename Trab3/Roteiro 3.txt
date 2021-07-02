@@ -1,0 +1,18 @@
+Roteiro 3
+un+1 = phi
+integral un+1*v + deltaT integral F(un+1)*v = integral un*v + fonte original
+  M = phii*phij           K+C = KC                 FONTE
+    
+M + K + C = FONTE + fonte original
+M + K + C = M*Ui (matriz M global*vetor Ui) + fonte original
+se E, Kappa e Y n dependem do tempo so montar a matriz esquerda uma vez
+com isso o termo fonte varia por conta do un
+
+depois dos loops:
+
+while (t < T)
+   t = t + deltaT
+   F = M*U(i,n) (n indica o passo do tempo, i a posiçao no vetor U naquele tempo t)
+   Resolve U(i,n+1) = A-1F 
+endwhile
+   

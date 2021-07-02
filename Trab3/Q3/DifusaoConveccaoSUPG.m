@@ -4,8 +4,12 @@ close all
 
 format long;
 %dominio
-a = 0.0;
-b = 1.0;
+a = 0.00;
+b = 2.00;
+
+T0 = 0.00;
+T = 1.25;
+
 erro = zeros(4,1);
 erroDer = zeros(4,1);
 hh = zeros(4,1);
@@ -24,9 +28,10 @@ for grau = 1:1
     Beta = coth(Peh) - 1/Peh;
     %tamanho do elemento
     hSUPG = (Peh*2*E)/abs(Kappa);
+    deltaT = hSUPG^2;
     Tau = (Beta*hSUPG)/(2*Kappa);
     %n de elementos
-    nel = (b-a)/hSUPG
+    nel = (b-a)/hSUPG;
     %grau do polinomio de interpolação
     k = grau;
     %n de nós do elemento
@@ -35,6 +40,7 @@ for grau = 1:1
     np =  k*nel+1;
     %n de pontos de integração
     nint = nen;
+    M = zeros(np,np);
     %matriz global de rigidez zerada
     K = zeros(np,np);
     %matriz global de convecção zerada
@@ -64,6 +70,7 @@ for grau = 1:1
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2;
           for i = 1:nen
+            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*hSUPG/2;
             K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/hSUPG*shg(2,j,l)*2/hSUPG*w(l)*hSUPG/2;
             %Para k=1 o termo de segunda derivada é anulado
             C((k*(n-1)+j),(k*(n-1)+i)) = C((k*(n-1)+j),(k*(n-1)+i)) + funcaoKappa(xx,Kappa)*shg(2,i,l)*2/hSUPG*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2;
@@ -71,82 +78,74 @@ for grau = 1:1
         endfor
       endfor
     endfor
-    KC = K + C;
+ 
+    A = M + K + C;
+    n = 0;
     
-    %Condição de Dirichlet entrada
-    KC(1,1) = 1;
-    F(1) = 0;
-    for i = 2:k+1
-      F(i) = F(i) - (F(1)*KC(i,1));
-      KC(1,i) = 0;
-      KC(i,1) = 0;
+    %U zero  = phiX(x,0)
+    for i = 1:np
+      U(i,1) = funcaoExata(xlSUPG(i),0,E,Kappa);
     endfor
-    
-    %Condição de Dirichlet saida
-    for i = np-(k+1):np
-      F(i) = F(i) - (F(np)*KC(i,np));
-      KC(np,i) = 0.;
-      KC(i,np) = 0.;
-    endfor
-    KC(np,np) = 1;
-    F(np) = 0;
+    t = T0;
+    espacoT = ceil((T-T0)/deltaT + 1)
+    Fonte = zeros(np);
+    U = zeros(np,espacoT);
+    while (t < T)
+        t += deltaT;
+        n++;
+        if n+1 > espacoT
+          break;
+        endif
+        Fonte = M*U(:,n) + F;
+        
+        %Condição de Dirichlet entrada
+        A(1,1) = 1;
+        Fonte(1) = funcaoExata(a,t,E,Kappa);
+        for i = 2:k+1
+          Fonte(i) = Fonte(i) - (Fonte(1)*A(i,1));
+          A(1,i) = 0;
+          A(i,1) = 0;
+        endfor
+        
+        %Condição de Dirichlet saida
+        for i = np-(k+1):np
+          Fonte(i) = Fonte(i) - (Fonte(np)*A(i,np));
+          A(np,i) = 0.;
+          A(i,np) = 0.;
+        endfor
+        A(np,np) = 1;
+        Fonte(np) = funcaoExata(b,t,E,Kappa);
+        unext = zeros(np);
+        unext = A\Fonte;
+        for i = 1:np
+          U(i,n+1) = unext(i);
+        endfor
+
+    endwhile
     
     %função exata
     x = a;
-    exata = zeros(np,1);
-    for i = 1:np
-      exata(i) = funcaoExata(x,E,Kappa);
-      x += hSUPG/k;
-    endfor  
-    x = a:hSUPG/k:b;
-    uSUPG = zeros(np);
-    uSUPG = KC\F;
-   
-    %cálculo do erro derivada L2
-    erdul2 = 0;
-    for n = 1:nel
-      erdu = 0;
-      for l = 1:nint
-        duh = 0;
-        xx = 0;
-        for i = 1:nen
-          duh = duh + shg(2,i,l)*2/hSUPG*uSUPG(k*(n-1)+i);
-          xx = xx + shg(1,i,l)*xlSUPG(k*(n-1)+i);
-        endfor
-        erdu = erdu + ((dfuncaoExata(xx,E,Kappa) - duh)**2) * w(l) * hSUPG/2;
-       endfor
-       erdul2 = erdul2 + erdu;
-     endfor
-    erdul2 = sqrt(erdul2);
-    erroDer(cont) = erdul2;
-
-    %cálculo do erro L2
-    erul2 = 0;
-    for n = 1:nel
-      eru = 0;
-      for l = 1:nint
-        uh = 0;
-        xx = 0;
-        for i = 1:nen
-          uh = uh + shg(1,i,l)*uSUPG(k*(n-1)+i);
-          xx = xx + shg(1,i,l)*xlSUPG(k*(n-1)+i);
-        endfor
-        eru = eru + ((funcaoExata(xx,E,Kappa) - uh)**2) * w(l) * hSUPG/2;
+    t = T0;
+    j = 1;
+    espacoT = ceil((T-T0)/deltaT + 1)
+    exata = zeros(np,espacoT);
+    while t <= T
+      for i = 1:np
+        exata(i,j) = funcaoExata(x,t,E,Kappa);
+        x += hSUPG/k;
       endfor
-      erul2 = erul2 + eru;
-    endfor
-    erul2 = sqrt(erul2);
-    erroSUPG(cont) = erul2;
-    hhSUPG(cont) = hSUPG;
-      
+      x = a;
+      j++;
+      t += deltaT;
+    endwhile
+    j
+    x = a:hSUPG/k:b;
+    t = T0:deltaT:T;
+    
     %salva a resolucao
-    nome = sprintf("log/PesosEPontosIntegracaoPehSUPG%dGrau%d.txt", Peh, grau);
-    save(nome, 'xlSUPG', 'hSUPG', 'uSUPG', 'x', 'exata');
+    nome = sprintf("log/PesosEPontosIntegracaoSUPGPeh%dGrau%d.txt", Peh, grau);
+    save(nome, 'xl', 'h', 'deltaT', 'U', 'x', 't', 'exata');
       
   endfor 
-  
-  %salva os erros
-  nome = sprintf("log/ErrosSUPG%d.txt", grau);
-  save(nome, 'erroSUPG', 'hhSUPG', 'erroDer');
 
 endfor 
