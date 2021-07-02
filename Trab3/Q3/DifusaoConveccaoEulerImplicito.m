@@ -14,10 +14,10 @@ erro = zeros(4,1);
 hh = zeros(4,1);
 
 for grau = 1:1
-  for cont = 1:3
+  for cont = 1:1
     Kappa = 1.;
     E = 1.e-2;
-    Peh = 1;
+    Peh = 5;
     if cont >=2
       Peh = 5;
       if cont >=3
@@ -66,7 +66,7 @@ for grau = 1:1
         for j = 1:nen
           F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
-            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*h/2;
+            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*h/2*1/deltaT;
             K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
             C((k*(n-1)+j),(k*(n-1)+i)) = C((k*(n-1)+j),(k*(n-1)+i)) + funcaoKappa(xx,Kappa)*shg(2,i,l)*2/h*shg(1,j,l)*w(l)*h/2;
           endfor
@@ -78,24 +78,26 @@ for grau = 1:1
     n = 0;
     
     %U zero  = phiX(x,0)
+    unext = zeros(np);
     for i = 1:np
-      U(i,1) = funcaoExata(xl(i),0,E,Kappa);
+      unext(i) = funcaoExata(xl(i),0,E,Kappa);
     endfor
     t = T0;
-    espacoT = ceil((T-T0)/deltaT + 1)
+    espacoT = floor((T-T0)/deltaT + 1)
     Fonte = zeros(np);
     U = zeros(np,espacoT);
     while (t < T)
         t += deltaT;
         n++;
-        if n+1 > espacoT
+        if n+1 > espacoT + 1
+          unext
           break;
         endif
-        Fonte = M*U(:,n) + F;
+        Fonte = M*unext + F;
         
         %Condição de Dirichlet entrada
         A(1,1) = 1;
-        Fonte(1) = funcaoExata(a,t,E,Kappa);
+        Fonte(1) = funcaoExata(0.,t,E,Kappa);
         for i = 2:k+1
           Fonte(i) = Fonte(i) - (Fonte(1)*A(i,1));
           A(1,i) = 0;
@@ -109,15 +111,17 @@ for grau = 1:1
           A(i,np) = 0.;
         endfor
         A(np,np) = 1;
-        Fonte(np) = funcaoExata(b,t,E,Kappa);
-        unext = zeros(np);
+        Fonte(np) = funcaoExata(2.,t,E,Kappa);
         unext = A\Fonte;
         for i = 1:np
-          U(i,n+1) = unext(i);
+          U(i,n+1) = unext(i,1);
         endfor
 
+        %zera o unext e permite ver o erro (provavelmente ta no dirichlet saida) 
+        %unext = zeros(np);
+        
     endwhile
-    
+  
     %função exata
     x = a;
     t = T0;
@@ -136,6 +140,11 @@ for grau = 1:1
     j
     x = a:h/k:b;
     t = T0:deltaT:T;
+    
+    %ajusta tam U pra plotagem
+    if length(t) < columns(U)
+      U(:,length(t)+1) = [];
+    endif
     
     %salva a resolucao
     nome = sprintf("log/PesosEPontosIntegracaoPeh%dGrau%d.txt", Peh, grau);
