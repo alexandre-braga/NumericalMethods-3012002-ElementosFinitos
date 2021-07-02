@@ -25,7 +25,7 @@ for grau = 1:1
         Peh = 10;
       endif
     endif
-    Beta = coth(Peh) - 1/Peh;
+    Beta = 1.5;
     %tamanho do elemento
     hSUPG = (Peh*2*E)/abs(Kappa);
     deltaT = hSUPG^2;
@@ -145,6 +145,10 @@ for grau = 1:1
     %ajusta tam U pra plotagem
     if length(t) < columns(U)
       U(:,length(t)+1) = [];
+    endif
+    
+    if length(t) < columns(Exata)
+      exata(:,length(t)+1) = [];
     endif
     
     %salva a resolucao

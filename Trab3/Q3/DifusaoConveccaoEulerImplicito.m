@@ -14,10 +14,10 @@ erro = zeros(4,1);
 hh = zeros(4,1);
 
 for grau = 1:1
-  for cont = 1:1
+  for cont = 1:3
     Kappa = 1.;
     E = 1.e-2;
-    Peh = 5;
+    Peh = 1;
     if cont >=2
       Peh = 5;
       if cont >=3
@@ -141,10 +141,14 @@ for grau = 1:1
     x = a:h/k:b;
     t = T0:deltaT:T;
     
-    %ajusta tam U pra plotagem
     if length(t) < columns(U)
       U(:,length(t)+1) = [];
     endif
+    
+    if length(t) < columns(exata)
+      exata(:,length(t)+1) = [];
+    endif
+    
     
     %salva a resolucao
     nome = sprintf("log/PesosEPontosIntegracaoPeh%dGrau%d.txt", Peh, grau);
