@@ -4,10 +4,10 @@ close all
 
 format long;
 %dominio
-a = 0.00;
-b = 2.00;
+a = 0.;
+b = 2.;
 
-T0 = 0.00;
+T0 = 0.;
 T = 1.25;
 
 erro = zeros(4,1);
@@ -25,7 +25,7 @@ for grau = 1:1
         Peh = 10;
       endif
     endif
-    Beta = 1.5;
+    Beta = 1;
     %tamanho do elemento
     hSUPG = (Peh*2*E)/abs(Kappa);
     deltaT = hSUPG^2;
@@ -78,18 +78,16 @@ for grau = 1:1
         endfor
       endfor
     endfor
- 
-    A = M + K + C;
-    n = 0;
-    
+
     %U zero  = phiX(x,0)
-    unext = zeros(np);
+    unext = zeros(np,1);
     for i = 1:np
       unext(i) = funcaoExata(xlSUPG(i),0,E,Kappa);
     endfor
+    
+    n = 0;
     t = T0;
     espacoT = ceil((T-T0)/deltaT + 1)
-    Fonte = zeros(np);
     U = zeros(np,espacoT);
     while (t < T)
         t += deltaT;
@@ -98,29 +96,34 @@ for grau = 1:1
           unext
           break;
         endif
+        A = zeros(np,np);
+        A = M + K + C;
+        Fonte = zeros(np,1);
         Fonte = M*unext + F;
         
         %Condição de Dirichlet entrada
-        A(1,1) = 1;
+        A(1,1) = 1.;
         Fonte(1) = funcaoExata(0.,t,E,Kappa);
         for i = 2:k+1
           Fonte(i) = Fonte(i) - (Fonte(1)*A(i,1));
-          A(1,i) = 0;
-          A(i,1) = 0;
+          A(1,i) = 0.;
+          A(i,1) = 0.;
         endfor
         
-        %Condição de Dirichlet saida
-        for i = np-(k+1):np
-          Fonte(i) = Fonte(i) - (Fonte(np)*A(i,np));
-          A(np,i) = 0.;
-          A(i,np) = 0.;
-        endfor
-        A(np,np) = 1;
-        Fonte(np) = funcaoExata(2.,t,E,Kappa);
-        unext = A\Fonte;
-        for i = 1:np
-          U(i,n+1) = unext(i);
-        endfor
+       %Condição de Dirichlet saida
+       Fonte(np) = funcaoExata(2.,t,E,Kappa);
+       for i = np-(k+1):np
+         Fonte(i) = Fonte(i) - (Fonte(np)*A(i,np));
+         A(np,i) = 0.;
+         A(i,np) = 0.;
+       endfor
+       A(np,np) = 1.;
+       Fonte(np) = funcaoExata(2.,t,E,Kappa);
+        
+       unext = A\Fonte;
+       for i = 1:np
+         U(i,n+1) = unext(i);
+       endfor
     endwhile
     
     %função exata
@@ -147,7 +150,7 @@ for grau = 1:1
       U(:,length(t)+1) = [];
     endif
     
-    if length(t) < columns(Exata)
+    if length(t) < columns(exata)
       exata(:,length(t)+1) = [];
     endif
     

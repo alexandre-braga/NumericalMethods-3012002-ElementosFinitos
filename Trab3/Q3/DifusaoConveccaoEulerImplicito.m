@@ -73,18 +73,16 @@ for grau = 1:1
         endfor
       endfor
     endfor
-
-    A = M + K + C;
-    n = 0;
     
     %U zero  = phiX(x,0)
-    unext = zeros(np);
+    unext = zeros(np,1);
     for i = 1:np
       unext(i) = funcaoExata(xl(i),0,E,Kappa);
     endfor
+    
+    n = 0;
     t = T0;
-    espacoT = floor((T-T0)/deltaT + 1)
-    Fonte = zeros(np);
+    espacoT = ceil((T-T0)/deltaT + 1)
     U = zeros(np,espacoT);
     while (t < T)
         t += deltaT;
@@ -93,35 +91,36 @@ for grau = 1:1
           unext
           break;
         endif
+        A = M + K + C;
+        Fonte = zeros(np,1);
         Fonte = M*unext + F;
         
         %Condição de Dirichlet entrada
-        A(1,1) = 1;
-        Fonte(1) = funcaoExata(0.,t,E,Kappa);
+        A(1,1) = 1.;
+        Fonte(1) = funcaoExata(a,t,E,Kappa);
         for i = 2:k+1
           Fonte(i) = Fonte(i) - (Fonte(1)*A(i,1));
-          A(1,i) = 0;
-          A(i,1) = 0;
+          A(1,i) = 0.;
+          A(i,1) = 0.;
         endfor
         
-        %Condição de Dirichlet saida
-        for i = np-(k+1):np
-          Fonte(i) = Fonte(i) - (Fonte(np)*A(i,np));
-          A(np,i) = 0.;
-          A(i,np) = 0.;
-        endfor
-        A(np,np) = 1;
-        Fonte(np) = funcaoExata(2.,t,E,Kappa);
-        unext = A\Fonte;
-        for i = 1:np
-          U(i,n+1) = unext(i,1);
-        endfor
-
-        %zera o unext e permite ver o erro (provavelmente ta no dirichlet saida) 
-        %unext = zeros(np);
+       %Condição de Dirichlet saida
+       Fonte(np) = funcaoExata(b,t,E,Kappa);
+       for i = np-(k+1):np
+         Fonte(i) = Fonte(i) - (Fonte(np)*A(i,np));
+         A(np,i) = 0.;
+         A(i,np) = 0.;
+       endfor
+       A(np,np) = 1.;
+       Fonte(np) = funcaoExata(b,t,E,Kappa);
         
+       unext =  A\Fonte;
+       for i = 1:np
+         U(i,n+1) = unext(i);
+       endfor
+       
     endwhile
-  
+
     %função exata
     x = a;
     t = T0;
