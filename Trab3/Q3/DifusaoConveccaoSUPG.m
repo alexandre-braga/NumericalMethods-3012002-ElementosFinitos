@@ -25,7 +25,7 @@ for grau = 1:1
         Peh = 10;
       endif
     endif
-    Beta = 1;
+    Beta = 1.;
     %tamanho do elemento
     hSUPG = (Peh*2*E)/abs(Kappa);
     deltaT = hSUPG^2;
@@ -50,7 +50,7 @@ for grau = 1:1
     %vetor fonte zerado
     F = zeros(np,1);
 
-    %montagem do xl !!!LINEAR!!!
+    %montagem do xl
     xlSUPG = zeros(np,1);
     xlSUPG(1) = a;
     for i = 2:np
@@ -87,6 +87,7 @@ for grau = 1:1
     
     n = 0;
     t = T0;
+    %tam aprox pra dim t
     espacoT = ceil((T-T0)/deltaT + 1)
     U = zeros(np,espacoT);
     while (t < T)
@@ -96,8 +97,10 @@ for grau = 1:1
           unext
           break;
         endif
+        %remontagem da matriz pra refazer  o contorno
         A = zeros(np,np);
         A = M + K + C;
+        %remontagem da fonte com unext atualizado
         Fonte = zeros(np,1);
         Fonte = M*unext + F;
         
@@ -121,9 +124,12 @@ for grau = 1:1
        Fonte(np) = funcaoExata(2.,t,E,Kappa);
         
        unext = A\Fonte;
+       
+       %armazena novo unext na matriz solucao
        for i = 1:np
          U(i,n+1) = unext(i);
        endfor
+       
     endwhile
     
     %função exata
@@ -149,7 +155,7 @@ for grau = 1:1
     if length(t) < columns(U)
       U(:,length(t)+1) = [];
     endif
-    
+    %ajusta tam exata pra plotagem
     if length(t) < columns(exata)
       exata(:,length(t)+1) = [];
     endif

@@ -15,4 +15,3 @@ while (t < T)
    F = M*U(i,n) (n indica o passo do tempo, i a posiçao no vetor U naquele tempo t)
    Resolve U(i,n+1) = A-1F 
 endwhile
-   

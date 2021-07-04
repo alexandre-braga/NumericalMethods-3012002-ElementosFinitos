@@ -17,7 +17,7 @@ for grau = 1:1
   for cont = 1:3
     Kappa = 1.;
     E = 1.e-2;
-    Peh = 1;
+    Peh = 1
     if cont >=2
       Peh = 5;
       if cont >=3
@@ -82,6 +82,7 @@ for grau = 1:1
     
     n = 0;
     t = T0;
+    %tam aprox pra dim t
     espacoT = ceil((T-T0)/deltaT + 1)
     U = zeros(np,espacoT);
     while (t < T)
@@ -91,6 +92,8 @@ for grau = 1:1
           unext
           break;
         endif
+        %remontagem da matriz pra refazer  o contorno
+        A = zeros(np,np);
         A = M + K + C;
         Fonte = zeros(np,1);
         Fonte = M*unext + F;
@@ -115,6 +118,8 @@ for grau = 1:1
        Fonte(np) = funcaoExata(b,t,E,Kappa);
         
        unext =  A\Fonte;
+       
+       %armazena novo unext na matriz solucao
        for i = 1:np
          U(i,n+1) = unext(i);
        endfor
@@ -140,10 +145,12 @@ for grau = 1:1
     x = a:h/k:b;
     t = T0:deltaT:T;
     
+    %ajusta tam U pra plotagem
     if length(t) < columns(U)
       U(:,length(t)+1) = [];
     endif
     
+    %ajusta tam exata pra plotagem
     if length(t) < columns(exata)
       exata(:,length(t)+1) = [];
     endif
