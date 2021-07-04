@@ -68,7 +68,7 @@ for grau = 1:1
           xx = xx + shg(1,i,l)*xlSUPG(k*(n-1)+i);
         endfor
         for j = 1:nen
-          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2;
+          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2 - shg(1,i,l)*1/deltaT*Tau*Kappa*shg(2,j,l);
           for i = 1:nen
             M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*hSUPG/2*1/deltaT;
             K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/hSUPG*shg(2,j,l)*2/hSUPG*w(l)*hSUPG/2;
