@@ -25,7 +25,7 @@ for grau = 1:1
         Peh = 10;
       endif
     endif
-    Beta = 1.;
+    Beta = -0.1;
     %tamanho do elemento
     hSUPG = (Peh*2*E)/abs(Kappa);
     deltaT = hSUPG^2;
@@ -68,9 +68,9 @@ for grau = 1:1
           xx = xx + shg(1,i,l)*xlSUPG(k*(n-1)+i);
         endfor
         for j = 1:nen
-          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2 - shg(1,i,l)*1/deltaT*Tau*Kappa*shg(2,j,l);
+          F(k*(n-1)+j) = F(k*(n-1)+j) + funcao(xx)*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2;
           for i = 1:nen
-            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*hSUPG/2*1/deltaT;
+            M((k*(n-1)+i),(k*(n-1)+j)) = M((k*(n-1)+i),(k*(n-1)+j)) + shg(1,i,l)*shg(1,j,l)*w(l)*hSUPG/2*1/deltaT + shg(1,i,l)*1/deltaT*Tau*Kappa*shg(2,j,l);
             K((k*(n-1)+i),(k*(n-1)+j)) = K((k*(n-1)+i),(k*(n-1)+j)) + funcaok(xx,E)*shg(2,i,l)*2/hSUPG*shg(2,j,l)*2/hSUPG*w(l)*hSUPG/2;
             %Para k=1 o termo de segunda derivada é anulado
             C((k*(n-1)+j),(k*(n-1)+i)) = C((k*(n-1)+j),(k*(n-1)+i)) + funcaoKappa(xx,Kappa)*shg(2,i,l)*2/hSUPG*(shg(1,j,l) + Tau*Kappa*shg(2,j,l))*w(l)*hSUPG/2;
@@ -79,17 +79,19 @@ for grau = 1:1
       endfor
     endfor
 
-    %U zero  = phiX(x,0)
-    unext = zeros(np,1);
-    for i = 1:np
-      unext(i) = funcaoExata(xlSUPG(i),0,E,Kappa);
-    endfor
-    
     n = 0;
     t = T0;
     %tam aprox pra dim t
     espacoT = ceil((T-T0)/deltaT + 1)
     U = zeros(np,espacoT);
+    
+    %U zero  = phiX(x,0)
+    unext = zeros(np,1);
+    for i = 1:np
+      unext(i) = funcaoExata(xlSUPG(i),0,E,Kappa);
+      U(i,1) = unext(i);
+    endfor
+
     while (t < T)
         t += deltaT;
         n++;
