@@ -24,6 +24,7 @@ for grau = 1:4
     
     A = zeros(np,np);
     B = zeros(np,np);
+    BT = zeros(np,np);
     C = zeros(np,np);
     
     G = zeros(np,1);
@@ -50,12 +51,12 @@ for grau = 1:4
           xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
         endfor
         for j = 1:nen
-          Ge(k*(n-1)+j) = Ge(k*(n-1)+j) + delta2*funcao(xx)*shg(2,j,l)*2/h*w(l)*h/2;
+          Ge(k*(n-1)+j) = Ge(k*(n-1)+j) - 0. + delta2*funcao(xx)*shg(2,j,l)*2/h*w(l)*h/2;
           Fe(k*(n-1)+j) = Fe(k*(n-1)+j) + funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
-            Ae((k*(n-1)+i),(k*(n-1)+j)) = Ae((k*(n-1)+i),(k*(n-1)+j)) + ((1+delta1)*shg(1,i,l)*shg(1,j,l) + delta2*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
+            Ae((k*(n-1)+i),(k*(n-1)+j)) = Ae((k*(n-1)+i),(k*(n-1)+j)) + (shg(1,i,l)*shg(1,j,l) + delta1*shg(1,i,l)*shg(1,j,l) + delta2*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
             Be((k*(n-1)+i),(k*(n-1)+j)) = Be((k*(n-1)+i),(k*(n-1)+j)) + (-shg(1,i,l)*shg(2,j,l)*2/h + delta1*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
-            Ce((k*(n-1)+j),(k*(n-1)+i)) = Ce((k*(n-1)+j),(k*(n-1)+i)) + delta1*shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
+            Ce((k*(n-1)+i),(k*(n-1)+j)) = Ce((k*(n-1)+i),(k*(n-1)+j)) + (delta1*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
           endfor
         endfor
       endfor
@@ -67,7 +68,7 @@ for grau = 1:4
       F = F + Fe;
     endfor
     %Matriz global
-    M = zeros(np,np);
+    M = zeros(2*np,2*np);
     Fonte = zeros(2*np,1);
     
     %Caso o tamanho difira, usar outros loops
