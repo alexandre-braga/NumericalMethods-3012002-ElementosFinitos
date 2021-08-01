@@ -71,42 +71,6 @@ for grau = 1:4
     %Matriz global
     M = zeros(2*np,2*np);
     Fonte = zeros(2*np,1);
-##    
-##    Condição de Dirichlet entrada forçando p
-##    C(1,1) = 1.;
-##    BT(1,1) = 0.;
-##    B(1,1) = 0.;
-##    F(1) = funcaoExata(a);
-##    for i = 2:k+1
-##      F(i) = F(i) - (F(1)*C(i,1));
-##      F(i) = F(i) - (F(1)*BT(i,1));
-##      G(i) = G(i) - (G(1)*B(i,1));
-##      C(1,i) = 0.;
-##      BT(1,i) = 0.;
-##      B(1,i) = 0.;
-##      C(i,1) = 0.;
-##      BT(i,1) = 0.;
-##      B(i,1) = 0.;
-##    endfor
-##        
-##    Condição de Dirichlet saida forçando p
-##    F(np) = funcaoExata(b);
-##    for i = np -(k+1):np
-##      F(i) = F(i) - (F(np)*C(i,np));
-##      F(i) = F(i) - (F(np)*BT(i,np));
-##      G(i) = G(i) - (G(np)*B(i,np));
-##      C(np,i) = 0.;
-##      BT(np,i) = 0.;
-##      B(np,i) = 0.;
-##      C(i,np) = 0.;
-##      BT(i,np) = 0.;
-##      B(i,np) = 0.;
-##    endfor
-##    C(np,np) = 1.;
-##    BT(np,np) = 0.;
-##    B(np,np) = 0.;
-##    F(np) = funcaoExata(b);
-##    
     
     %Caso o tamanho difira, usar outros loops
     %E modificar o tamanho da M, o mesmo pra F
