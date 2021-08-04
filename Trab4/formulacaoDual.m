@@ -55,7 +55,7 @@ for grau = 1:4
           Fe(k*(n-1)+j) = Fe(k*(n-1)+j) - funcao(xx)*shg(1,j,l)*w(l)*h/2;
           for i = 1:nen
             Ae((k*(n-1)+i),(k*(n-1)+j)) = Ae((k*(n-1)+i),(k*(n-1)+j)) + (shg(1,i,l)*shg(1,j,l) + delta1*shg(1,i,l)*shg(1,j,l) + delta2*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
-            Be((k*(n-1)+i),(k*(n-1)+j)) = Be((k*(n-1)+i),(k*(n-1)+j)) + (-shg(1,i,l)*shg(2,j,l)*2/h + delta1*shg(2,i,l)*2/h*shg(1,j,l))*w(l)*h/2;
+            Be((k*(n-1)+j),(k*(n-1)+i)) = Be((k*(n-1)+j),(k*(n-1)+i)) + (-shg(1,i,l)*shg(2,j,l)*2/h + delta1*shg(2,i,l)*2/h*shg(1,j,l))*w(l)*h/2;
             Ce((k*(n-1)+i),(k*(n-1)+j)) = Ce((k*(n-1)+i),(k*(n-1)+j)) + (delta1*shg(2,i,l)*2/h*shg(2,j,l)*2/h)*w(l)*h/2;
           endfor
         endfor
@@ -103,10 +103,33 @@ for grau = 1:4
     endfor
     x = a:h/k:b;
     
+    %cálculo do erro L2
+    erul2 = 0;
+    for n = 1:nel
+      eru = 0;
+      for l = 1:nint
+        ph = 0;
+        xx = 0;
+        for i = 1:nen
+          ph = ph + shg(1,i,l)*p(k*(n-1)+i);
+          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+        endfor
+        eru = eru + ((funcaoExata(xx) - ph)**2) * w(l) * h/2;
+      endfor
+      erul2 = erul2 + eru;
+    endfor
+    erul2 = sqrt(erul2);
+    erro(cont) = erul2;
+    hh(cont) = h;
+    
     %salva a resolucao
     nome = sprintf("log/PesosEPontosIntegracao%dGrau%d.txt", cont, grau);
     save(nome, 'xl', 'h', 'u', 'p', 'x', 'exata');
       
   endfor 
+  
+  %salva os erros
+  nome = sprintf("log/Erros%d.txt", grau);
+  save(nome, 'erro', 'hh' );
   
 endfor 

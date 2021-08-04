@@ -1,0 +1,21 @@
+# Created by Octave 6.2.0, Wed Aug 04 01:49:50 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: erro
+# type: matrix
+# rows: 4
+# columns: 1
+ 2.5783499096478772e-09
+ 8.0641384100588513e-11
+ 1.0850942865039874e-11
+ 3.6251137900980098e-12
+
+
+# name: hh
+# type: matrix
+# rows: 4
+# columns: 1
+ 0.0625
+ 0.03125
+ 0.020833333333333332
+ 0.015625
+
+
