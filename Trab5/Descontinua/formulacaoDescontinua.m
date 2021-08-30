@@ -98,7 +98,7 @@ for cont = 1:4
   xlU2 = xl(2:end);
   
   %salva a resolucao
-  nome = sprintf("log/PesosEPontosIntegracao%dalfa%dbeta%d.txt", cont, alfa, beta);
+  nome = sprintf("log/PesosEPontosIntegracao%dalfa%dbeta%d.txt", cont, alfa, beta)
   save(nome, 'alfa', 'beta', 'h', 'xlU1', 'xlU2', 'U', 'x', 'exata');
   
 endfor 

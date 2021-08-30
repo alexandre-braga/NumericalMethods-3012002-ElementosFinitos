@@ -18,3 +18,5 @@ hold on;
 xlabel -log10(hh);
 ylabel log10(erro); 
 legend('grau1', 'grau2', 'grau3', 'grau4');
+
+plot(x,exata,xlU1,U(:,1),xlU2,U(:,2)); legend('exata','U1','U2');
