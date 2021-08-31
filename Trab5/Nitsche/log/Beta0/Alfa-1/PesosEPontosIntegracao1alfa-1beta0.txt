@@ -1,4 +1,4 @@
-# Created by Octave 6.2.0, Mon Aug 30 19:46:54 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.2.0, Mon Aug 30 22:07:23 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: alfa
 # type: scalar
 -1
@@ -29,11 +29,11 @@
 # type: matrix
 # rows: 5
 # columns: 1
- 0.05181082843688363
- 0.25897416326189759
- 0.051810828436883762
- -0.15535250638813014
- 0.05181082843688356
+ 0.99990897829267544
+ 0.70711782397135148
+ 6.661338147750939e-17
+ -0.70711782397135148
+ -0.99990897829267533
 
 
 # name: x
