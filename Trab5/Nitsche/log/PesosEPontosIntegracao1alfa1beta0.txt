@@ -1,0 +1,55 @@
+# Created by Octave 6.2.0, Mon Aug 30 21:10:08 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: alfa
+# type: scalar
+1
+
+
+# name: beta
+# type: scalar
+0
+
+
+# name: h
+# type: scalar
+0.25
+
+
+# name: xl
+# type: matrix
+# rows: 5
+# columns: 1
+ 0
+ 0.25
+ 0.5
+ 0.75
+ 1
+
+
+# name: u
+# type: matrix
+# rows: 5
+# columns: 1
+ 10.000546130243949
+ 7.7075729325079756
+ 5.0002730651219744
+ 2.2929731977359733
+ 0
+
+
+# name: x
+# type: range
+# base, limit, increment
+0 1 0.25
+
+
+# name: exata
+# type: matrix
+# rows: 5
+# columns: 1
+ 1
+ 0.70710678118654757
+ 6.123233995736766e-17
+ -0.70710678118654746
+ -1
+
+
