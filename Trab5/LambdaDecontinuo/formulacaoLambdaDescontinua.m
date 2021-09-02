@@ -14,7 +14,7 @@ alfa = input('Insira o valor de alfa: ');
 erro = zeros(4,1);
 hh = zeros(4,1);
 
-for grau = 1:1
+for grau = 1:2
    for cont = 1:4
    nel = 4^cont;
    h = (b-a)/nel;
@@ -24,11 +24,11 @@ for grau = 1:1
    
    nen = k+1;
    np =  k*nel+1
-   nint = nen;
+   nint = 2;
       
    Lambda = zeros(np);
    lambdak = zeros(nen);
-   U = zeros(nel,nen);
+   U = zeros(nel,2);
    u = zeros(nen);
 
    elementosK = zeros(np,np);
@@ -62,7 +62,7 @@ for grau = 1:1
        for i = 1:nen
          Fk(i) = Fk(i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
-           Ak(i,j) = Ak(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h**w(l)*h/2;
+           Ak(i,j) = Ak(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h*w(l)*h/2;
          endfor
        endfor
      endfor
@@ -75,10 +75,9 @@ for grau = 1:1
          Ak(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
        endfor
      endfor
-     #erro ta aqui
      for j = 1:nen
-       BTk(1,j) += alfa*shge(2,j,1)*2/h + beta*shge(1,j,1);
-       BTk(2,j) += -alfa*shge(2,j,2)*2/h - beta*shge(1,j,2);
+       BTk(1,j) += - shge(2,j,1)*2/h + beta*shge(1,j,1);
+       BTk(2,j) += shge(2,j,2)*2/h - beta*shge(1,j,2);
      endfor
      Ck(1,1) = -beta;
      Ck(2,2) = beta;
@@ -86,8 +85,6 @@ for grau = 1:1
      if alfa == -1
        BTk = transpose(Bk);
      endif
-     #Bk   
-     #BTk   
         
      #calcula K e F elemento
      elementoK = zeros(2,2);
@@ -96,9 +93,9 @@ for grau = 1:1
      Fkk = -BTk*inverse(Ak)*Fk;
         
      #armazena como global o elemento
-     for i = 1:nen
+     for i = 1:2
        FkGlobal(k*(n-1)+i) += Fkk(i);
-       for j = 1:nen
+       for j = 1:2
          elementosK(k*(n-1)+i,k*(n-1)+j) += elementoK(i,j);
        endfor
      endfor
@@ -125,7 +122,25 @@ for grau = 1:1
       
    #elementosK
    #FkGlobal
-   Lambda = elementosK\FkGlobal;
+   
+   #encontrar uma forma de consertar as casas decimais muito pequenas que aparecem
+##   if grau > 1
+##     for i = 1:np
+##       sum = 0.;
+##       for j = 1:np
+##         sum += elementosK(i,j);
+##       endfor
+##       if sum <= 1.*10e^-10
+##         erro = 'soma muito pequena, vai dar erro, ajustando a matriz'
+##         for j = 1:np
+##            elementosK(i,j) = round(elementosK(i,j));
+##         endfor
+##       endif
+##     endfor
+##   endif
+ 
+   
+   Lambda = inverse(elementosK)*FkGlobal
       
    %Problema Local
    for n = 1:nel
@@ -139,22 +154,22 @@ for grau = 1:1
        for i = 1:nen
          Fe(i) = Fe(i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
-           Ae(i,j) = Ae(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h**w(l)*h/2;
+           Ae(i,j) = Ae(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h*w(l)*h/2;
          endfor
        endfor
-   endfor
-        
-   for i = 1:nen
-      Fe(i) += alfa*(shge(2,i,2)*2/h*Lambda(n+1) - shge(2,i,1)*2/h*Lambda(n) ) + beta*(shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n));
-      for j = 1:nen
-         Ae(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+     endfor
+     for i = 1:nen
+        Fe(i) += alfa*(shge(2,i,2)*2/h*Lambda(n+1) - shge(2,i,1)*2/h*Lambda(n) ) + beta*(shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n));
+        for j = 1:nen
+          Ae(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+        endfor
       endfor
-   endfor
-
-   u = Ae\Fe;
-   U(n,1) = u(1);
-   U(n,2) = u(2);
-        
+      u = zeros(nen);
+      u = Ae\Fe;
+      for i = 1:nen
+        U(n,i) = u(i);
+      endfor
+      
    endfor
       
    %função exata
@@ -165,13 +180,13 @@ for grau = 1:1
      x += h/k;
    endfor
    x = a:h/k:b;
-      
+    
    xlU1 = xl(1:end-1);
    xlU2 = xl(2:end);
-      
+   
    %salva a resolucao
    nome = sprintf("log/PesosEPontosIntegracao%dalfa%dgrau%d.txt", cont, alfa, grau);
-   save(nome, 'alfa', 'beta', 'h', 'xlU1', 'xlU2', 'U', 'x', 'exata');
+   save(nome, 'alfa', 'beta', 'Lambda', 'h', 'xlU1', 'xlU2', 'U', 'x', 'exata');
     
   endfor 
 endfor

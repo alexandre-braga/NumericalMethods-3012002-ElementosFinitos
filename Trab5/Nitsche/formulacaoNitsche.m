@@ -46,7 +46,7 @@ for cont = 1:4
       for i = 1:nen
         F(k*(n-1)+i) = F(k*(n-1)+i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
         for j = 1:nen
-          A((k*(n-1)+i),(k*(n-1)+j)) = A((k*(n-1)+i),(k*(n-1)+j)) + shg(2,i,l)*2/h*shg(2,j,l)*2/h**w(l)*h/2;
+          A((k*(n-1)+i),(k*(n-1)+j)) = A((k*(n-1)+i),(k*(n-1)+j)) + shg(2,i,l)*2/h*shg(2,j,l)*2/h*w(l)*h/2;
         endfor
       endfor
     endfor

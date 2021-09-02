@@ -47,7 +47,7 @@ for cont = 1:4
       for i = 1:nen
         Fe(i) = Fe(i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
         for j = 1:nen
-          Ae(i,j) = Ae(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h**w(l)*h/2;
+          Ae(i,j) = Ae(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h*w(l)*h/2;
         endfor
       endfor
     endfor
