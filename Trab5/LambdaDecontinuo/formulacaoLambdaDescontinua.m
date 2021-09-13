@@ -14,8 +14,8 @@ alfa = input('Insira o valor de alfa: ');
 erro = zeros(4,1);
 hh = zeros(4,1);
 
-for grau = 1:2
-   for cont = 1:4
+for grau = 2:2
+   for cont = 1:2
    nel = 4^cont;
    h = (b-a)/nel;
    k = grau;
@@ -28,7 +28,7 @@ for grau = 1:2
       
    Lambda = zeros(np);
    lambdak = zeros(nen);
-   U = zeros(nel,2);
+   U = zeros(nen,nel);
    u = zeros(nen);
 
    elementosK = zeros(np,np);
@@ -75,6 +75,7 @@ for grau = 1:2
          Ak(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
        endfor
      endfor
+
      for j = 1:nen
        BTk(1,j) += - shge(2,j,1)*2/h + beta*shge(1,j,1);
        BTk(2,j) += shge(2,j,2)*2/h - beta*shge(1,j,2);
@@ -85,7 +86,7 @@ for grau = 1:2
      if alfa == -1
        BTk = transpose(Bk);
      endif
-        
+     
      #calcula K e F elemento
      elementoK = zeros(2,2);
      elementoK = Ck - BTk*inverse(Ak)*Bk;
@@ -93,6 +94,7 @@ for grau = 1:2
      Fkk = -BTk*inverse(Ak)*Fk;
         
      #armazena como global o elemento
+
      for i = 1:2
        FkGlobal(k*(n-1)+i) += Fkk(i);
        for j = 1:2
@@ -100,7 +102,7 @@ for grau = 1:2
        endfor
      endfor
    endfor
-      
+
    %Condição de Dirichlet entrada
    elementosK(1,1) = 1.;
    FkGlobal(1) = funcaoExata(a);
@@ -108,6 +110,7 @@ for grau = 1:2
      FkGlobal(i) = FkGlobal(i) - (FkGlobal(1)*elementosK(i,1));
      elementosK(1,i) = 0.;
      elementosK(i,1) = 0.;
+     elementosK(i,i) = round(elementosK(i,i));
    endfor
         
    %Condição de Dirichlet saida
@@ -116,31 +119,33 @@ for grau = 1:2
      FkGlobal(i) = FkGlobal(i) - (FkGlobal(np)*elementosK(i,np));
      elementosK(np,i) = 0.;
      elementosK(i,np) = 0.;
+     elementosK(i,i) = round(elementosK(i,i));
    endfor
    elementosK(np,np) = 1.;
    FkGlobal(np) = funcaoExata(b);
       
-   #elementosK
+   elementosK
    #FkGlobal
    
-   #encontrar uma forma de consertar as casas decimais muito pequenas que aparecem
-##   if grau > 1
-##     for i = 1:np
-##       sum = 0.;
-##       for j = 1:np
-##         sum += elementosK(i,j);
-##       endfor
-##       if sum <= 1.*10e^-10
-##         erro = 'soma muito pequena, vai dar erro, ajustando a matriz'
-##         for j = 1:np
-##            elementosK(i,j) = round(elementosK(i,j));
-##         endfor
-##       endif
-##     endfor
-##   endif
+   #tentativa de consertar as casas decimais muito pequenas que aparecem
+   if grau > 1
+     for i = 1:np
+       sum = 0.;
+       for j = 1:np
+         sum += elementosK(i,j);
+       endfor
+       tolerancia = 0.000000000001;
+       if sum < abs(tolerancia)
+         sum
+         sum = 'soma muito pequena, vai dar erro, ajustando a matriz'
+         for j = 1:np
+            elementosK(i,j) = round(elementosK(i,j));
+         endfor
+       endif
+     endfor
+   endif
  
-   
-   Lambda = inverse(elementosK)*FkGlobal
+   Lambda = elementosK\FkGlobal
       
    %Problema Local
    for n = 1:nel
@@ -164,14 +169,14 @@ for grau = 1:2
           Ae(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
         endfor
       endfor
+
       u = zeros(nen);
       u = Ae\Fe;
       for i = 1:nen
-        U(n,i) = u(i);
+        U(i,n) = u(i);
       endfor
-      
    endfor
-      
+   
    %função exata
    x = a;
    exata = zeros(np,1);
@@ -181,12 +186,10 @@ for grau = 1:2
    endfor
    x = a:h/k:b;
     
-   xlU1 = xl(1:end-1);
-   xlU2 = xl(2:end);
    
    %salva a resolucao
    nome = sprintf("log/PesosEPontosIntegracao%dalfa%dgrau%d.txt", cont, alfa, grau);
-   save(nome, 'alfa', 'beta', 'Lambda', 'h', 'xlU1', 'xlU2', 'U', 'x', 'exata');
+   save(nome, 'alfa', 'beta', 'Lambda', 'h', 'xl', 'U', 'x', 'exata');
     
   endfor 
 endfor
