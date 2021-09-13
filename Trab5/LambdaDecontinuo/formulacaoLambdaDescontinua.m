@@ -7,32 +7,31 @@ format long;
 a = 0.00;
 b = 1.00;
 
-grau = 1;
 beta0 = 10;
 alfa = input('Insira o valor de alfa: ');
 
 erro = zeros(4,1);
 hh = zeros(4,1);
 
-for grau = 2:2
-   for cont = 1:2
+for grau = 3:3
+   for cont = 1:4
    nel = 4^cont;
    h = (b-a)/nel;
    k = grau;
       
    beta = k*k*beta0/h
    
-   nen = k+1;
-   np =  k*nel+1
-   nint = 2;
+   nen = k+1
+   np =  k*nel+1;
+   nint = nen+1
       
-   Lambda = zeros(np);
+   Lambda = zeros(nel+1);
    lambdak = zeros(nen);
-   U = zeros(nen,nel);
+   U = zeros(nel,nen);
    u = zeros(nen);
 
-   elementosK = zeros(np,np);
-   FkGlobal = zeros(np,1);
+   elementosK = zeros(nel+1,nel+1);
+   FkGlobal = zeros(nel+1,1);
       
    %montagem do xl
    xl = zeros(np,1);
@@ -87,6 +86,10 @@ for grau = 2:2
        BTk = transpose(Bk);
      endif
      
+     if grau == 3
+       inverse(Ak)
+       continuar = input('matriz nao invertivel, aperte para continuar');
+     endif
      #calcula K e F elemento
      elementoK = zeros(2,2);
      elementoK = Ck - BTk*inverse(Ak)*Bk;
@@ -96,13 +99,18 @@ for grau = 2:2
      #armazena como global o elemento
 
      for i = 1:2
-       FkGlobal(k*(n-1)+i) += Fkk(i);
+       FkGlobal((n-1)+i) += Fkk(i);
        for j = 1:2
-         elementosK(k*(n-1)+i,k*(n-1)+j) += elementoK(i,j);
+         elementosK((n-1)+i,(n-1)+j) += elementoK(i,j);
        endfor
      endfor
    endfor
-
+   
+##   Ak
+##   Bk
+##   BTk
+##   Ck
+     
    %Condição de Dirichlet entrada
    elementosK(1,1) = 1.;
    FkGlobal(1) = funcaoExata(a);
@@ -110,42 +118,41 @@ for grau = 2:2
      FkGlobal(i) = FkGlobal(i) - (FkGlobal(1)*elementosK(i,1));
      elementosK(1,i) = 0.;
      elementosK(i,1) = 0.;
-     elementosK(i,i) = round(elementosK(i,i));
    endfor
         
    %Condição de Dirichlet saida
-   FkGlobal(np) = funcaoExata(b);
-   for i = np-(k+1):np
-     FkGlobal(i) = FkGlobal(i) - (FkGlobal(np)*elementosK(i,np));
-     elementosK(np,i) = 0.;
-     elementosK(i,np) = 0.;
-     elementosK(i,i) = round(elementosK(i,i));
+   FkGlobal(nel+1) = funcaoExata(b);
+   for i = nel+1-(k+1):nel+1
+     FkGlobal(i) = FkGlobal(i) - (FkGlobal(nel+1)*elementosK(i,nel+1));
+     elementosK(nel+1,i) = 0.;
+     elementosK(i,nel+1) = 0.;
    endfor
-   elementosK(np,np) = 1.;
-   FkGlobal(np) = funcaoExata(b);
+   elementosK(nel+1,nel+1) = 1.;
+   FkGlobal(nel+1) = funcaoExata(b);
       
    elementosK
-   #FkGlobal
-   
-   #tentativa de consertar as casas decimais muito pequenas que aparecem
-   if grau > 1
-     for i = 1:np
-       sum = 0.;
-       for j = 1:np
-         sum += elementosK(i,j);
-       endfor
-       tolerancia = 0.000000000001;
-       if sum < abs(tolerancia)
-         sum
-         sum = 'soma muito pequena, vai dar erro, ajustando a matriz'
-         for j = 1:np
-            elementosK(i,j) = round(elementosK(i,j));
-         endfor
-       endif
-     endfor
-   endif
+   FkGlobal
+   continuar = input('matriz nao invertivel, aperte para continuar');
+     
+##   #tentativa de consertar as casas decimais muito pequenas que aparecem
+##   if grau > 1
+##     for i = 1:nel+1
+##       sum = 0.;
+##       for j = 1:nel+1
+##         sum += elementosK(i,j);
+##       endfor
+##       tolerancia = 0.000000000000001;
+##       if sum <= abs(tolerancia)
+##         sum
+##         sum = 'soma muito pequena, vai dar erro, ajustando a matriz'
+##         for j = 1:nel+1
+##            elementosK(i,j) = round(elementosK(i,j));
+##         endfor
+##       endif
+##     endfor
+##   endif
  
-   Lambda = elementosK\FkGlobal
+   Lambda = elementosK\FkGlobal;
       
    %Problema Local
    for n = 1:nel
@@ -173,7 +180,7 @@ for grau = 2:2
       u = zeros(nen);
       u = Ae\Fe;
       for i = 1:nen
-        U(i,n) = u(i);
+        U(n,i) = u(i);
       endfor
    endfor
    
@@ -189,7 +196,7 @@ for grau = 2:2
    
    %salva a resolucao
    nome = sprintf("log/PesosEPontosIntegracao%dalfa%dgrau%d.txt", cont, alfa, grau);
-   save(nome, 'alfa', 'beta', 'Lambda', 'h', 'xl', 'U', 'x', 'exata');
+   save(nome, 'alfa', 'beta', 'Lambda', 'nen', 'nel', 'h', 'xl', 'U', 'x', 'exata');
     
   endfor 
 endfor
