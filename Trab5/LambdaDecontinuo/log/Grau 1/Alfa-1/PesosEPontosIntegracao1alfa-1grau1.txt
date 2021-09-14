@@ -1,4 +1,4 @@
-# Created by Octave 6.2.0, Thu Sep 02 17:00:56 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# Created by Octave 6.3.0, Tue Sep 14 02:52:43 2021 -03 <kuroneko@kuroneko-VirtualBox>
 # name: alfa
 # type: scalar
 -1
@@ -14,10 +14,20 @@
 # rows: 5
 # columns: 1
  0
- 0.70729986738599859
+ 0.7072998673859987
  1.0002730651219709
  0.7072998673859987
  1.2246467991473532e-16
+
+
+# name: nen
+# type: scalar
+2
+
+
+# name: nel
+# type: scalar
+4
 
 
 # name: h
@@ -25,20 +35,11 @@
 0.25
 
 
-# name: xlU1
+# name: xl
 # type: matrix
-# rows: 4
+# rows: 5
 # columns: 1
  0
- 0.25
- 0.5
- 0.75
-
-
-# name: xlU2
-# type: matrix
-# rows: 4
-# columns: 1
  0.25
  0.5
  0.75
@@ -49,8 +50,8 @@
 # type: matrix
 # rows: 4
 # columns: 2
- -0.0055026028048569065 0.7247989776900795
- 0.68661924418872422 1.0351234896701096
+ -0.0055026028048569065 0.72479897769007962
+ 0.68661924418872433 1.0351234896701096
  0.97652885012291479 0.73908670013235545
  0.69440109970370523 0.0101029454266446
 

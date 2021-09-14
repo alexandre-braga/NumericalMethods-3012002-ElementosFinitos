@@ -20,10 +20,9 @@ for grau = 3:3
    k = grau;
       
    beta = k*k*beta0/h
-   
    nen = k+1
    np =  k*nel+1;
-   nint = nen+1
+   nint = k+1
       
    Lambda = zeros(nel+1);
    lambdak = zeros(nen);
@@ -87,6 +86,7 @@ for grau = 3:3
      endif
      
      if grau == 3
+       Ak
        inverse(Ak)
        continuar = input('matriz nao invertivel, aperte para continuar');
      endif
@@ -105,11 +105,6 @@ for grau = 3:3
        endfor
      endfor
    endfor
-   
-##   Ak
-##   Bk
-##   BTk
-##   Ck
      
    %Condição de Dirichlet entrada
    elementosK(1,1) = 1.;
@@ -122,35 +117,13 @@ for grau = 3:3
         
    %Condição de Dirichlet saida
    FkGlobal(nel+1) = funcaoExata(b);
-   for i = nel+1-(k+1):nel+1
+   for i = nel+1-k:nel+1
      FkGlobal(i) = FkGlobal(i) - (FkGlobal(nel+1)*elementosK(i,nel+1));
      elementosK(nel+1,i) = 0.;
      elementosK(i,nel+1) = 0.;
    endfor
    elementosK(nel+1,nel+1) = 1.;
    FkGlobal(nel+1) = funcaoExata(b);
-      
-   elementosK
-   FkGlobal
-   continuar = input('matriz nao invertivel, aperte para continuar');
-     
-##   #tentativa de consertar as casas decimais muito pequenas que aparecem
-##   if grau > 1
-##     for i = 1:nel+1
-##       sum = 0.;
-##       for j = 1:nel+1
-##         sum += elementosK(i,j);
-##       endfor
-##       tolerancia = 0.000000000000001;
-##       if sum <= abs(tolerancia)
-##         sum
-##         sum = 'soma muito pequena, vai dar erro, ajustando a matriz'
-##         for j = 1:nel+1
-##            elementosK(i,j) = round(elementosK(i,j));
-##         endfor
-##       endif
-##     endfor
-##   endif
  
    Lambda = elementosK\FkGlobal;
       

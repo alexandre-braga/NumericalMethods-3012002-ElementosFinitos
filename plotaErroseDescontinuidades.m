@@ -21,4 +21,4 @@ legend('grau1', 'grau2', 'grau3', 'grau4');
 
 plot(x,exata,xlU1,U(:,1),xlU2,U(:,2)); legend('exata','U1','U2');
 
-plot(x,exata); hold on; legend('exata'); hold on; j = 1; i=1; while i<=256 plot(xl(j:j+(nen-1)),U(i,:)); hold on; j+=2; i++; endwhile
+plot(x,exata); hold on; legend('exata'); hold on; j = 1; i=1; while i<=256 plot(xl(j:j+(nen-1)),U(i,:)); hold on; j+=(nen-1); i++; endwhile
