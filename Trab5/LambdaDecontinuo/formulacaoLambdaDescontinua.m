@@ -85,11 +85,6 @@ for grau = 3:3
        BTk = transpose(Bk);
      endif
      
-     if grau == 3
-       Ak
-       inverse(Ak)
-       continuar = input('matriz nao invertivel, aperte para continuar');
-     endif
      #calcula K e F elemento
      elementoK = zeros(2,2);
      elementoK = Ck - BTk*inverse(Ak)*Bk;
