@@ -10,15 +10,15 @@ b = 1.00;
 beta0 = 10;
 alfa = input('Insira o valor de alfa: ');
 
-erro = zeros(4,1);
+erro = zeros(4,1);   
 hh = zeros(4,1);
 
-for grau = 3:3
+for grau = 1:4
    for cont = 1:4
    nel = 4^cont;
    h = (b-a)/nel;
    k = grau;
-      
+   
    beta = k*k*beta0/h
    nen = k+1
    np =  k*nel+1;
@@ -161,10 +161,34 @@ for grau = 3:3
    endfor
    x = a:h/k:b;
     
+   %cálculo do erro L2
+   erul2 = 0;
+   for n = 1:nel
+     eru = 0;
+     for l = 1:nint
+        uh = 0;
+        xx = 0;
+        for i = 1:nen
+          uh = uh + shg(1,i,l)*U(n,i);
+          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+        endfor
+        eru = eru + ((funcaoExata(xx) - uh)**2) * w(l) * h/2;
+     endfor
+     erul2 = erul2 + eru;
+   endfor
+   erul2 = sqrt(erul2);
+   erro(cont) = erul2;
+   hh(cont) = h;
+    
    
    %salva a resolucao
    nome = sprintf("log/PesosEPontosIntegracao%dalfa%dgrau%d.txt", cont, alfa, grau);
    save(nome, 'alfa', 'beta', 'Lambda', 'nen', 'nel', 'h', 'xl', 'U', 'x', 'exata');
     
-  endfor 
+  endfor
+  
+  %salva os erros
+  nome = sprintf("log/Erros%d.txt", grau);
+  save(nome, 'erro', 'hh' );
+
 endfor
