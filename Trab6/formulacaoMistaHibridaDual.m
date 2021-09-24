@@ -32,7 +32,6 @@ for grau = 1:1
    solAux = zeros(2*nen);
    u = zeros(nen);
    p = zeros(nen);
-   %dar um split de u/U em U e P pois teremos u1,u2,p1,2 a cada 'u'
 
    elementosK = zeros(nel+1,nel+1);
    FkGlobal = zeros(nel+1,1);
@@ -63,11 +62,11 @@ for grau = 1:1
          xx = xx + shg(1,j,l)*xl(k*(n-1)+j);
        endfor
        for i = 1:nen
-         Fk(i) = Fk(i) + delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
-         Fk(nen+i) = Fk(nen+i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
+         Fk(i) += delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
+         Fk(nen+i) += -funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
            %PHI j PHI i
-           Ak(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)) )*w(l)*h/2;
+           Ak(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)*2/h) )*w(l)*h/2;
            %PSI j PHI i
            Ak(i,nen+j) += ( -(shg(1,j,l)*shg(2,i,l)*2/h) + delta1*(shg(2,j,l)*2/h*shg(1,i,l)) )*w(l)*h/2;
            %PHI j PSI i
@@ -89,10 +88,21 @@ for grau = 1:1
        %-beta PSI i lambda 2
        Bk(nen+1,2) += -beta*shge(1,i,2);
        for j = 1:nen
-        Ak(nen+1,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+        Ak(nen+i,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
        endfor
      endfor
-
+     
+     for j = 1:nen
+       %-PHI i lambda 1
+       BTk(1,j) += -shge(1,j,1);
+       %PHI i lambda 2
+       BTk(2,j) += shge(1,j,2);
+       %beta PSI i lambda 1
+       BTk(1,nen+j) += beta*shge(1,j,1);
+       %-beta PSI i lambda 2
+       BTk(2,nen+j) += -beta*shge(1,j,2);
+     endfor
+     
      BTk = transpose(Bk);
      
      Ck(1,1) = -beta;
@@ -146,12 +156,12 @@ for grau = 1:1
        endfor
        for i = 1:nen
          %V
-         Fe(i) = Fe(i) + delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
+         Fe(i) += delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
          %Q
-         Fe(nen+i) = Fe(nen+i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
+         Fe(nen+i) += - funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
            %PHI j PHI i
-           Ae(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)) )*w(l)*h/2;
+           Ae(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)*2/h) )*w(l)*h/2;
            %PSI j PHI i
            Ae(i,nen+j) += ( -(shg(1,j,l)*shg(2,i,l)*2/h) + delta1*(shg(2,j,l)*2/h*shg(1,i,l)) )*w(l)*h/2;
            %PHI j PSI i
@@ -168,7 +178,7 @@ for grau = 1:1
        %Q
        Fe(nen+i) += beta*( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
        for j = 1:nen
-         Ae(nen+1,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+         Ae(nen+i,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
        endfor
      endfor
 
