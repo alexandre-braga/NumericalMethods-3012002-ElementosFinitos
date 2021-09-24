@@ -92,19 +92,8 @@ for grau = 1:1
        endfor
      endfor
      
-     for j = 1:nen
-       %-PHI i lambda 1
-       BTk(1,j) += -shge(1,j,1);
-       %PHI i lambda 2
-       BTk(2,j) += shge(1,j,2);
-       %beta PSI i lambda 1
-       BTk(1,nen+j) += beta*shge(1,j,1);
-       %-beta PSI i lambda 2
-       BTk(2,nen+j) += -beta*shge(1,j,2);
-     endfor
-     
      BTk = transpose(Bk);
-     
+         
      Ck(1,1) = -beta;
      Ck(2,2) = beta;
      
