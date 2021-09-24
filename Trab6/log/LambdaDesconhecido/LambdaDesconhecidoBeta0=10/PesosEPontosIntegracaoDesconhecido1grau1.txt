@@ -1,0 +1,80 @@
+# Created by Octave 6.3.0, Fri Sep 24 20:22:14 2021 -03 <kuroneko@kuroneko-VirtualBox>
+# name: beta
+# type: scalar
+40
+
+
+# name: Lambda
+# type: matrix
+# rows: 5
+# columns: 1
+ 1
+ 1.4790449701232651
+ -0.027592492917091538
+ -1.5180666478262996
+ -1
+
+
+# name: nen
+# type: scalar
+2
+
+
+# name: nel
+# type: scalar
+4
+
+
+# name: h
+# type: scalar
+0.25
+
+
+# name: xl
+# type: matrix
+# rows: 5
+# columns: 1
+ 0
+ 0.25
+ 0.5
+ 0.75
+ 1
+
+
+# name: U
+# type: matrix
+# rows: 4
+# columns: 2
+ -57.617662504086653 61.450022265072789
+ -40.95016328363883 28.897063579315979
+ 31.045168779675308 -42.968962018948986
+ 62.469103037514998 -58.324569854904624
+
+
+# name: P
+# type: matrix
+# rows: 4
+# columns: 2
+ -0.45904873984089567 2.9411573017659425
+ 0.62115357332951715 0.83769506875409305
+ 0.88978136794996154 -2.4280443438159161
+ -0.034379464642869804 -2.4806235913816481
+
+
+# name: x
+# type: range
+# base, limit, increment
+0 1 0.25
+
+
+# name: exata
+# type: matrix
+# rows: 5
+# columns: 1
+ 1
+ 0.70710678118654757
+ 6.123233995736766e-17
+ -0.70710678118654746
+ -1
+
+

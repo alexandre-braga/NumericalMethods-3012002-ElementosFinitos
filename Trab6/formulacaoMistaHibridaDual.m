@@ -19,7 +19,7 @@ hh = zeros(4,1);
 
 lambdaConhecido = input("Digite 1 se deseja Lambda = p, 0 caso não \n");
 
-for grau = 1:1
+for grau = 1:4
    for cont = 1:4
    nel = 4^cont;
    h = (b-a)/nel;
@@ -30,7 +30,7 @@ for grau = 1:1
    np =  k*nel+1;
    nint = k+1
       
-   Lambda = zeros(nel+1);
+   Lambda = zeros(nel+1,1);
    U = zeros(nel,nen);
    P = zeros(nel,nen);
    solAux = zeros(2*nen);
@@ -81,7 +81,7 @@ for grau = 1:1
            endfor
          endfor
        endfor
-          
+       
        #Calcula B, A , BT, C pra cada elemento
        for i = 1:nen
          %-PHI i lambda 1
@@ -145,6 +145,7 @@ for grau = 1:1
        Lambda(n) = funcaoExata(xl(n));
      endfor
    endif
+   Lambda;
    
    %Problema Local
    for n = 1:nel
@@ -207,7 +208,8 @@ for grau = 1:1
    endfor
    x = a:h/k:b;
     
-##   %cálculo do erro L2 conferir com o da formulacaoDual
+    %fazer cálculo da derivada do erro L2 para u
+##   %cálculo do erro L2 para p
 ##   erul2 = 0;
 ##   for n = 1:nel
 ##     eru = 0;
@@ -236,7 +238,7 @@ for grau = 1:1
     save(nome, 'beta', 'Lambda', 'nen', 'nel', 'h', 'xl', 'U', 'P', 'x', 'exata');
    endif
 
-    
+   
   endfor
   
 ##  %salva os erros
