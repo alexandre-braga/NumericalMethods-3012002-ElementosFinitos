@@ -11,12 +11,11 @@ delta1 = -1/2;
 delta2 = 1/2;
 
 beta0 = 10;
-alfa = input('Insira o valor de alfa: ');
 
 erro = zeros(4,1);   
 hh = zeros(4,1);
 
-for grau = 1:4
+for grau = 1:1
    for cont = 1:4
    nel = 4^cont;
    h = (b-a)/nel;
@@ -28,8 +27,11 @@ for grau = 1:4
    nint = k+1
       
    Lambda = zeros(nel+1);
-   U = zeros(nel,2*nen);
-   u = zeros(2*nen);
+   U = zeros(nel,nen);
+   P = zeros(nel,nen);
+   solAux = zeros(2*nen);
+   u = zeros(nen);
+   p = zeros(nen);
    %dar um split de u/U em U e P pois teremos u1,u2,p1,2 a cada 'u'
 
    elementosK = zeros(nel+1,nel+1);
@@ -64,48 +66,37 @@ for grau = 1:4
          Fk(i) = Fk(i) + delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
          Fk(nen+i) = Fk(nen+i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
-           Ak(i,j) = Ak(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h*w(l)*h/2;
+           %PHI j PHI i
+           Ak(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)) )*w(l)*h/2;
+           %PSI j PHI i
+           Ak(i,nen+j) += ( -(shg(1,j,l)*shg(2,i,l)*2/h) + delta1*(shg(2,j,l)*2/h*shg(1,i,l)) )*w(l)*h/2;
+           %PHI j PSI i
+           Ak(nen+i,j) += ( -(shg(2,j,l)*2/h*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(2,i,l)*2/h) )*w(l)*h/2;
+           %PSI j PSI i
+           Ak(nen+i,nen+j) += (delta1*(shg(2,j,l)*2/h*shg(2,i,l)*2/h) )*w(l)*h/2;
          endfor
        endfor
      endfor
         
      #Calcula B, A , BT, C pra cada elemento
      for i = 1:nen
-       Bk(i,1) += shge(2,i,1)*2/h + beta*shge(1,i,1);
-       Bk(i,2) += shge(2,i,2)*2/h - beta*shge(1,i,2);
+       %-PHI i lambda 1
+       Bk(i,1) += -shge(1,i,1);
+       %PHI i lambda 2
+       Bk(i,2) += shge(1,i,2);
+       %beta PSI i lambda 1
+       Bk(nen+1,1) += beta*shge(1,i,1);
+       %-beta PSI i lambda 2
+       Bk(nen+1,2) += -beta*shge(1,i,2);
        for j = 1:nen
-         Ak(i,j) += 
-         %PHI J PHI I 
-         (shge(1,j,2)*2/h*shge(1,i,2) - shge(1,j,1)*2/h*shge(1,i,1))
-         %PSI j PHI i'
-         -(shge(1,j,2)*2/h*shge(2,i,2) - shge(1,j,1)*2/h*shge(2,i,1))
-         %PHI j' PSI i
-         -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1))
-         %(PHI j + PSI j')(PHI i + PSHI j')
-         +delta1()
-         %PHI j' PHI i'
-         +delta2(shge(2,j,2)*2/h*shge(2,i,2) - shge(2,j,1)*2/h*shge(2,i,1))
-         %PSI j PSI i - PSI j PSI i
-         +beta(shge(1,j,2)*2/h*shge(1,i,2) - shge(1,j,1)*2/h*shge(1,i,1))
-         %posicionar corretamente relacionando u, p com phi e psi corretamente
-         %conferir com o posicionamento na formulacao dual
-         %colocar a parte integral na parte do codigo certa
-         Ak(nen+i,j) +=
-         Ak(i,nen+j) +=
-         Ak(nen+i,nen+j) +=
-        endfor
+        Ak(nen+1,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+       endfor
      endfor
 
-     for j = 1:nen
-       BTk(1,j) += - shge(2,j,1)*2/h + beta*shge(1,j,1);
-       BTk(2,j) += shge(2,j,2)*2/h - beta*shge(1,j,2);
-     endfor
+     BTk = transpose(Bk);
+     
      Ck(1,1) = -beta;
      Ck(2,2) = beta;
-        
-     if alfa == -1
-       BTk = transpose(Bk);
-     endif
      
      #calcula K e F elemento
      elementoK = zeros(2,2);
@@ -146,32 +137,54 @@ for grau = 1:4
       
    %Problema Local
    for n = 1:nel
-     Ae = zeros(nen,nen);
-     Fe = zeros(nen,1);
+     Ae = zeros(2*nen,2*nen);
+     Fe = zeros(2*nen,1);
      for l = 1:nint
        xx = 0.;
        for j = 1:nen
          xx = xx + shg(1,j,l)*xl(k*(n-1)+j);
        endfor
        for i = 1:nen
-         Fe(i) = Fe(i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
+         %V
+         Fe(i) = Fe(i) + delta2*funcao(xx)*shg(2,i,l)*2/h*w(l)*h/2;
+         %Q
+         Fe(nen+i) = Fe(nen+i) + funcao(xx)*shg(1,i,l)*w(l)*h/2;
          for j = 1:nen
-           Ae(i,j) = Ae(i,j) + shg(2,j,l)*2/h*shg(2,i,l)*2/h*w(l)*h/2;
+           %PHI j PHI i
+           Ae(i,j) += ( (shg(1,j,l)*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(1,i,l)) + delta2*(shg(2,j,l)*2/h*shg(2,i,l)) )*w(l)*h/2;
+           %PSI j PHI i
+           Ae(i,nen+j) += ( -(shg(1,j,l)*shg(2,i,l)*2/h) + delta1*(shg(2,j,l)*2/h*shg(1,i,l)) )*w(l)*h/2;
+           %PHI j PSI i
+           Ae(nen+i,j) += ( -(shg(2,j,l)*2/h*shg(1,i,l)) + delta1*(shg(1,j,l)*shg(2,i,l)*2/h) )*w(l)*h/2;
+           %PSI j PSI i
+           Ae(nen+i,nen+j) += (delta1*(shg(2,j,l)*2/h*shg(2,i,l)*2/h) )*w(l)*h/2;
          endfor
        endfor
      endfor
+     
      for i = 1:nen
-        Fe(i) += alfa*(shge(2,i,2)*2/h*Lambda(n+1) - shge(2,i,1)*2/h*Lambda(n) ) + beta*(shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n));
-        for j = 1:nen
-          Ae(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
-        endfor
-      endfor
+       %V
+       Fe(i) += ( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
+       %Q
+       Fe(nen+i) += beta*( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
+       for j = 1:nen
+         Ae(nen+1,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
+       endfor
+     endfor
 
-      u = zeros(nen);
-      u = Ae\Fe;
-      for i = 1:nen
-        U(n,i) = u(i);
-      endfor
+     solAux = zeros(2*nen);
+     u = zeros(nen);
+     p = zeros(nen);
+    
+     solAux = Ae\Fe;
+     u = solAux(1:nen)
+     p = solAux(nen+1:2*nen)
+    
+     for i = 1:nen
+       U(n,i) = u(i);
+       P(n,i) = p(i);
+     endfor
+   
    endfor
    
    %função exata
@@ -183,7 +196,7 @@ for grau = 1:4
    endfor
    x = a:h/k:b;
     
-   %cálculo do erro L2
+   %cálculo do erro L2 conferir com o da formulacaoDual
    erul2 = 0;
    for n = 1:nel
      eru = 0;
@@ -204,8 +217,8 @@ for grau = 1:4
     
    
    %salva a resolucao
-   nome = sprintf("log/PesosEPontosIntegracao%dalfa%dgrau%d.txt", cont, alfa, grau);
-   save(nome, 'alfa', 'beta', 'Lambda', 'nen', 'nel', 'h', 'xl', 'U', 'x', 'exata');
+   nome = sprintf("log/PesosEPontosIntegracao%dgrau%d.txt", cont, grau);
+   save(nome, 'beta', 'Lambda', 'nen', 'nel', 'h', 'xl', 'U', 'P', 'x', 'exata');
     
   endfor
   
