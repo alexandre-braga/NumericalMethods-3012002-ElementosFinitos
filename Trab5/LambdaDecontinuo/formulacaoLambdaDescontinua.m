@@ -143,13 +143,13 @@ for grau = 1:4
         for j = 1:nen
           Ae(i,j) += -(shge(2,j,2)*2/h*shge(1,i,2) - shge(2,j,1)*2/h*shge(1,i,1)) + alfa*(shge(2,i,2)*2/h*shge(1,j,2) - shge(2,i,1)*2/h*shge(1,j,1)) + beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
         endfor
-      endfor
+     endfor
 
-      u = zeros(nen);
-      u = Ae\Fe;
-      for i = 1:nen
-        U(n,i) = u(i);
-      endfor
+     u = zeros(nen);
+     u = Ae\Fe;
+     for i = 1:nen
+       U(n,i) = u(i);
+     endfor
    endfor
    
    %função exata
