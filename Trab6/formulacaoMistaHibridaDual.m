@@ -14,6 +14,7 @@ delta2
 beta0 = input("Defina beta00 como 10 ou 0: \n");
 beta0
 
+derro = zeros(4,1);
 erro = zeros(4,1);   
 hh = zeros(4,1);
 
@@ -89,9 +90,9 @@ for grau = 1:4
          %PHI i lambda 2
          Bk(i,2) += shge(1,i,2);
          %beta PSI i lambda 1
-         Bk(nen+1,1) += beta*shge(1,i,1);
+         Bk(nen+i,1) += beta*shge(1,i,1);
          %-beta PSI i lambda 2
-         Bk(nen+1,2) += -beta*shge(1,i,2);
+         Bk(nen+i,2) += -beta*shge(1,i,2);
          for j = 1:nen
           Ak(nen+i,nen+j) += beta*(shge(1,j,2)*shge(1,i,2) - shge(1,j,1)*shge(1,i,1));
          endfor
@@ -176,7 +177,7 @@ for grau = 1:4
      
      for i = 1:nen
        %V
-       Fe(i) += ( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
+       Fe(i) += -( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
        %Q
        Fe(nen+i) += beta*( shge(1,i,2)*Lambda(n+1) - shge(1,i,1)*Lambda(n) );
        for j = 1:nen
@@ -208,26 +209,42 @@ for grau = 1:4
    endfor
    x = a:h/k:b;
     
-    %fazer cálculo da derivada do erro L2 para u
-##   %cálculo do erro L2 para p
-##   erul2 = 0;
-##   for n = 1:nel
-##     eru = 0;
-##     for l = 1:nint
-##        uh = 0;
-##        xx = 0;
-##        for i = 1:nen
-##          uh = uh + shg(1,i,l)*U(n,i);
-##          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
-##        endfor
-##        eru = eru + ((funcaoExata(xx) - uh)**2) * w(l) * h/2;
-##     endfor
-##     erul2 = erul2 + eru;
-##   endfor
-##   erul2 = sqrt(erul2);
-##   erro(cont) = erul2;
-##   hh(cont) = h;
-    
+   %cálculo do erro L2 para p
+   erul2 = 0;
+   for n = 1:nel
+     eru = 0;
+     for l = 1:nint
+        ph = 0;
+        xx = 0;
+        for i = 1:nen
+          ph = ph + shg(1,i,l)*P(n,i);
+          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+        endfor
+        eru = eru + ((funcaoExata(xx) - ph)**2) * w(l) * h/2;
+     endfor
+     erul2 = erul2 + eru;
+   endfor
+   erul2 = sqrt(erul2);
+   erro(cont) = erul2;
+   hh(cont) = h;
+ 
+   %cálculo da derivada do erro L2 para u   
+   erdul2 = 0.;
+   for n = 1:nel
+     erdu = 0;
+     for l = 1:nint
+        duh = 0;
+        xx = 0;
+        for i = 1:nen
+          duh = duh + shg(2,i,l)*U(n,i);
+          xx = xx + shg(1,i,l)*xl(k*(n-1)+i);
+        endfor
+        erdu = erdu + ((dfuncaoExata(xx) - duh)**2) * w(l) * h/2;
+     endfor
+     erdul2 = erdul2 + eru;
+   endfor
+   erdul2 = sqrt(erdul2);
+   derro(cont) = erdul2;
    
    %salva a resolucao
    if lambdaConhecido == 1
@@ -241,8 +258,11 @@ for grau = 1:4
    
   endfor
   
-##  %salva os erros
-##  nome = sprintf("log/Erros%d.txt", grau);
-##  save(nome, 'erro', 'hh' );
+  if lambdaConhecido == 1
+    break;
+  endif
+  %salva os erros
+  nome = sprintf("log/Erros%d.txt", grau);
+  save(nome, 'erro', 'derro', 'hh' );
 
 endfor
